@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>stone1.png</file>
+        <file>stone2.png</file>
+        <file>stone3.png</file>
+        <file>gun1.png</file>
+        <file>tower1.png</file>
+        <file>tower2.png</file>
+        <file>icestone.jpg</file>
+        <file>island.jpg</file>
+        <file>effect1.png</file>
+        <file>effect2.png</file>
+        <file>effect3.png</file>
+        <file>dest1.jpg</file>
+        <file>stone4.jpg</file>
+        <file>path3.jpg</file>
+        <file>path4.jpg</file>
+        <file>stone5.jpg</file>
+    </qresource>
+</RCC>
