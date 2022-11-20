@@ -1,12 +1,14 @@
 #include "gamewindow.h"
 #include "ui_gamewindow.h"
-#include "roles.h"
 #include <fstream>
 #include <iostream>
 #include <QImageReader>
 #include <QTimer>
 #include "findmonsterway.h"
 #include "time.h"
+#include <QMediaPlayer>
+#include <QAudioOutput>
+#include <QMovie>
 using namespace std;
 
 GameWindow::GameWindow(QWidget *parent) :
@@ -25,121 +27,98 @@ GameWindow::~GameWindow()
 GameWindow::GameWindow(string path)//从文件读入地图
 {
     MonsterNumber=0;//初始化怪物数量
-    setFixedSize(1040, 640);//初始化窗口大小，13x8*80（基本地图扩大80倍）
+    setFixedSize(910, 560);//初始化窗口大小，13x8*80（基本地图扩大80倍）
     setWindowTitle("GameWindow");
+    loadmap(path);
+    //playMusic();//因为版本原因暂时无法实现
 
-    //读入地图基本数据
-    loadMap(path);//初始地图
     MonsterWays=FindMonsterWay().FindWay(basic_map);//初始化怪兽的所有路径
-    /**cout<< "Monster Ways:"<<endl;
-    for(int i=0; i<MonsterWays.size(); ++i)
-        {
-            for(int j=0; j<MonsterWays[i].size(); ++j)
-            {
-                cout<<MonsterWays[i][j].x<<","<<MonsterWays[i][j].y<<" ";
-            }
-            cout<< endl;
-        }
-        cout<< "ok"<<endl;
-    **/
 
     //启动monster计时器
     timer_monster = new QTimer(this);
     connect(timer_monster, SIGNAL(timeout()), this, SLOT(addMonster()));
-    timer_monster->start(1000);
+    timer_monster->start(10000);//每10秒增加一波怪兽
 
-    //游戏刷新计时器
-    timer_game = new QTimer(this);
-    connect(timer_game, SIGNAL(timeout()), this, SLOT(refreshGameWindow()));
+   //测试，生成一个怪兽
+    srand((unsigned)time(NULL));
+   vector<Pos>p=MonsterWays[rand()%MonsterWays.size()];//随机选中一个路径
+    Monsters.push_back(basic_Monster(p));
+
+
+    QTimer* timer_game = new QTimer(this);
+    connect(timer_game, SIGNAL(timeout()), this, SLOT(gaming()));
     timer_game->start(100);
-
-
-
-
-    update();
 }
 
 
-void GameWindow::paintEvent(QPaintEvent*)
+void GameWindow::loadmap(string path)
+{
+    ifstream fin;
+        fin.open(path);
+        if(fin.fail()) cout<< "Fail to open the file:"<<path <<endl;
+        for(int i=0; i<8; ++i)
+        {
+            for(int j=0; j<13; ++j)
+            {
+                fin >> basic_map[i][j];
+            }
+        }
+        fin.close();
+
+        cout<< "map:"<<endl;
+        for(int i=0; i<8; ++i)
+        {
+            for(int j=0; j<13; ++j)
+            {
+                cout<<basic_map[i][j]<<" ";
+            }
+
+            cout<<endl;
+        }
+        cout<< "ok."<<endl;
+
+}
+
+
+void GameWindow::paintEvent(QPaintEvent*)//重载重新绘画函数，系统刷新时自动调用
 {
     QPainter painter(this);
 
-    drawMap(painter);       //画出地图
-
-//    drawBull(painter);      //画出子弹
-//    drawEnemy(painter);     //画出怪物
-//    drawTower(painter);     //画出防御塔
-//    drawHitEffect(painter); //画出命中效果
-
-//    drawSelectionFrame(painter);    //画出选择框
-
-//    if(victoryFlag)         //画出游戏胜利提示
-//        painter.setPen(QPen(Qt::white)), painter.setFont(QFont("楷体", 110)), painter.drawText(176, 350, "游戏胜利");
-
+    drawMap(painter); //画出地图
+    drawMonster(painter);
 }
 
-
-void GameWindow::loadMap(string path)
+void GameWindow::drawMap(QPainter& painter)
 {
-    ifstream fin;
-    fin.open(path);
-    if(fin.fail()) cout<< "Fail to open the file:"<<path <<endl;
-    for(int i=0; i<8; ++i)
-    {
-        for(int j=0; j<13; ++j)
-        {
-            fin >> basic_map[i][j];
-        }
-    }
-    fin.close();
-
-    cout<< "map:"<<endl;
-    for(int i=0; i<8; ++i)
-    {
-        for(int j=0; j<13; ++j)
-        {
-            cout<<basic_map[i][j]<<" ";
-        }
-
-        cout<<endl;
-    }
-    cout<< "ok."<<endl;
-
-}
-
-
-void GameWindow::drawMap(QPainter &painter)
-{
-
     for(int j = 0; j < 8; j++)
-    {
-            for(int i = 0; i < 13; i++)
-            {
-                //采用QImageReader加速读取
-                QImageReader reader;
-                QImage image;
-                reader.setDecideFormatFromContent(true);
-                reader.setScaledSize(QSize(mapBlockLen, mapBlockLen));
-                reader.setFileName(QString::fromStdString(Pics[basic_map[j][i]]));
-                if (reader.canRead())
+        {
+                for(int i = 0; i < 13; i++)
                 {
-                    if (!reader.read(&image))
+                    //采用QImageReader加速读取
+                    QImageReader reader;
+                    QImage image;
+                    reader.setDecideFormatFromContent(true);
+                    reader.setScaledSize(QSize(mapBlockLen, mapBlockLen));
+                    reader.setFileName(QString::fromStdString(Pics[basic_map[j][i]]));
+                    if (reader.canRead())
                     {
-                        QImageReader::ImageReaderError error = reader.error();
-                        QString strError = reader.errorString();
-                        printf("last error:%s\n", strError.toStdString().c_str());
-                        return;
+                        if (!reader.read(&image))
+                        {
+                            QImageReader::ImageReaderError error = reader.error();
+                            QString strError = reader.errorString();
+                            printf("last error:%s\n", strError.toStdString().c_str());
+                            return;
+                        }
                     }
+                    painter.drawPixmap(i * mapBlockLen, j * mapBlockLen, mapBlockLen, mapBlockLen, QPixmap::fromImage(image));
+
+                    //painter.drawPixmap(i * mapBlockLen, j * mapBlockLen, mapBlockLen, mapBlockLen, QPixmap(QString::fromStdString(Pics[basic_map[j][i]])));
+
+
+
                 }
-                painter.drawPixmap(i * mapBlockLen, j * mapBlockLen, mapBlockLen, mapBlockLen, QPixmap::fromImage(image));
 
-                //painter.drawPixmap(i * mapBlockLen, j * mapBlockLen, mapBlockLen, mapBlockLen, QPixmap(QString::fromStdString(Pics[basic_map[j][i]])));
-
-
-
-            }
-
-   }
+       }
 }
 
 void GameWindow::addMonster()//根据已添加怪兽的数量来添加不同级别的怪兽，怪兽越多添加的级别越高，路径随机生成
@@ -214,48 +193,49 @@ void GameWindow::addMonster()//根据已添加怪兽的数量来添加不同级�
 
 }
 
-void GameWindow::refreshGameWindow()
+//因为版本原因暂时无法实现
+void GameWindow::playMusic()
 {
-    //攻击怪兽
-    for(auto tower : Towers)
-    {
-        vector<Monster> tempMonster;
-        for(auto &monster : Monsters)  //遍历敌人数组，将防御塔范围内的所有敌人插入到临时敌人数组中
-            if(tower.inRange(monster))
-                tempMonster.push_back(monster);
-
-        tower.Attack(tempMonster); //把范围内的敌人作为参数传递给防御塔
-    }
-
-
+    QMediaPlayer* player = new QMediaPlayer();
+    //connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
+    player->setMedia(QUrl::fromLocalFile(":/images/music1.mp3"));
+    player->setVolume(50);  //音量
+    player->play();
 }
 
-//画出选择框
-void GameWindow::drawSelectionFrame(QPainter& painter)
+
+void GameWindow::drawMonster(QPainter& painter)   //画出敌人和血条
 {
-    if(!selectionFrame.getDisplay()) return;    //选择框显示状态为假则返回
-
-    //画出选择框
-    painter.drawPixmap(selectionFrame.getCoor().x, selectionFrame.getCoor().y,
-       selectionFrame.getSelSideLength(), selectionFrame.getSelSideLength(),
-       QPixmap("../PictureMaterial/Check_the_tower_effect.png"));
-
-    //画出选中标志2
-    painter.drawPixmap(selectionFrame.getCoor().x + ((selectionFrame.getSelSideLength() - mapBlockLen) >> 1),
-       selectionFrame.getCoor().y + ((selectionFrame.getSelSideLength() - mapBlockLen) >> 1),
-       mapBlockLen, mapBlockLen, QPixmap("../PictureMaterial/Check_the_tower_effect.png"));
-
-    //画出子按钮
-    for(int i = 0; i < 4; i++)
+    for(auto m : Monsters)
     {
-        painter.drawPixmap(selectionFrame.getChildButtonArr()[i].x, selectionFrame.getChildButtonArr()[i].y,
-            selectionFrame.getButSideLength(), selectionFrame.getButSideLength(),
-            QPixmap(selectionFrame.getChildButtonArr()[i].picturePath));
+//        QLabel *label = new QLabel();
+//        QMovie *movie = new QMovie(QString::fromStdString(m.getPic()));
 
-        //画出防御塔图片
-        painter.drawPixmap(selectionFrame.getChildButtonArr()[i].x + 10, selectionFrame.getChildButtonArr()[i].y + 10,
-            selectionFrame.getButSideLength() - 20, selectionFrame.getButSideLength() - 20,
-            QPixmap(selectionFrame.getTowerPicturePathArr()[i]));
+//        label->move(m.getPos().y-35, m.getPos().x-35);
+//        QSize s(m.getWidth(), m.getHeight());
+//        movie->setScaledSize(s);
+//        label->setMovie(movie); // 1. 设置要显示的 GIF 动画图片
+//        movie->start();         // 2. 启动动画
+//        label->show();
+
+        QPixmap pix;
+        pix.load(QString::fromStdString(m.getPic()));
+        //painter.drawRect(m.getPos().x, m.getPos().y - 10, m.getWidth() * (m.getHealth() / enemy->getOrihealth()), 6);    //画出敌人血条
+        painter.drawPixmap(m.getPos().y-35, m.getPos().x-35, m.getWidth(), m.getHeight(), pix);
+        //cout<<m.getPos().x<<" "<< m.getPos().y<<endl;
     }
+    //cout<<"monster"<<endl;
+}
+
+void GameWindow::gaming()
+{
+    for(vector<Monster>::iterator it= Monsters.begin();it!=Monsters.end(); ++it)//注意这里怪兽的移动需要用指针来
+    {
+
+        it->move();
+
+        //cout<<m.getPos().x<<" "<< m.getPos().y<<endl;
+    }
+    update();
 }
 

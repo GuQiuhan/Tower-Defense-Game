@@ -1,4 +1,5 @@
 QT       += core gui
+QT += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,24 +18,36 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     findmonsterway.cpp \
+    gamecontroller.cpp \
     gamestart.cpp \
     gamewindow.cpp \
+    gamewindowtwo.cpp \
+    load.cpp \
     main.cpp \
     monster.cpp \
+    monstertwo.cpp \
+    player.cpp \
     structures.cpp \
     tower.cpp
 
 HEADERS += \
     findmonsterway.h \
+    gamecontroller.h \
     gamestart.h \
     gamewindow.h \
+    gamewindowtwo.h \
+    load.h \
     monster.h \
+    monstertwo.h \
+    player.h \
     structures.h \
     tower.h
 
 FORMS += \
     gamestart.ui \
-    gamewindow.ui
+    gamewindow.ui \
+    gamewindowtwo.ui \
+    load.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

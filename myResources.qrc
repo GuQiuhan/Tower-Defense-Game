@@ -1,20 +1,41 @@
 <RCC>
     <qresource prefix="/image">
-        <file>stone1.png</file>
         <file>stone2.png</file>
         <file>stone3.png</file>
-        <file>gun1.png</file>
         <file>tower1.png</file>
         <file>tower2.png</file>
-        <file>icestone.jpg</file>
-        <file>island.jpg</file>
         <file>effect1.png</file>
         <file>effect2.png</file>
         <file>effect3.png</file>
         <file>dest1.jpg</file>
         <file>stone4.jpg</file>
         <file>path3.jpg</file>
-        <file>path4.jpg</file>
-        <file>stone5.jpg</file>
+        <file>block1.jpg</file>
+        <file>monster1.gif</file>
+        <file>monster2.gif</file>
+        <file>grass1.jpg</file>
+        <file>sand.jpg</file>
+        <file>start1.jpg</file>
+        <file>button1.jpg</file>
+        <file>water.jpg</file>
+        <file>map2.gif</file>
+        <file>photo1.jpg</file>
+        <file>photo2.jpg</file>
     </qresource>
+    <qresource prefix="/music"/>
+    <qresource prefix="/gif">
+        <file>ghost.gif</file>
+        <file>skeleton.gif</file>
+        <file>frog.gif</file>
+        <file>bat.gif</file>
+        <file>Dino1.gif</file>
+        <file>Dino2.gif</file>
+        <file>Dino3.gif</file>
+        <file>Dino4.gif</file>
+        <file>boss_attack.gif</file>
+        <file>boss_death.gif</file>
+        <file>boss_attack2.gif</file>
+        <file>boss_airAttack.gif</file>
+    </qresource>
+    <qresource prefix="/ music"/>
 </RCC>
