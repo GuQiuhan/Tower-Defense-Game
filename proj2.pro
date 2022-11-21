@@ -17,29 +17,27 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bullet.cpp \
     findmonsterway.cpp \
     gamecontroller.cpp \
     gamestart.cpp \
-    gamewindow.cpp \
     load.cpp \
     main.cpp \
     mainwindow.cpp \
     monster.cpp \
-    monstertwo.cpp \
     player.cpp \
     structures.cpp \
     test.cpp \
     tower.cpp
 
 HEADERS += \
+    bullet.h \
     findmonsterway.h \
     gamecontroller.h \
     gamestart.h \
-    gamewindow.h \
     load.h \
     mainwindow.h \
     monster.h \
-    monstertwo.h \
     player.h \
     structures.h \
     test.h \

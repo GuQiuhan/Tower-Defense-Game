@@ -1,9 +1,10 @@
 #include "gamecontroller.h"
-#include "monstertwo.h"
+#include "monster.h"
 #include "tower.h"
 #include <QEvent>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include "bullet.h"
 
 GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     QObject(parent),
@@ -11,10 +12,13 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
 {
     timer.start( 1000/33 );//开启充当游戏循环的定时器，定时间隔是 1000 / 33 毫秒，也就是每秒 30（1000 / 33 = 30）帧
     //用于测试
-    MonsterTwo* m=new MonsterTwo();
+    Monster* m=new Monster();
     scene.addItem(m);
     MoonTower* t=new MoonTower(100,300);
     scene.addItem(t);
+    bullet* b=new bullet(QPointF(100,100),QPointF(200,200));
+    scene.addItem(b);
+
 
     scene.installEventFilter(this);//添加了事件过滤器，以便监听键盘事件
     connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance())); //这里的advanced()函数需要重写（？）
@@ -103,7 +107,7 @@ void GameController::gameOver() //游戏结束，计时器停止
         connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));//重新开始游戏
         scene.clear();
 
-        MonsterTwo* m=new MonsterTwo();
+        Monster* m=new Monster();
         scene.addItem(m);
     } else {
         exit(0);

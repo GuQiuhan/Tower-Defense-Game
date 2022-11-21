@@ -1,6 +1,5 @@
 #include "gamestart.h"
 #include "ui_gamestart.h"
-#include "gamewindow.h"
 #include "mainwindow.h"
 #include <string>
 #include <QMouseEvent>
@@ -83,17 +82,12 @@ void GameStart::start()
     delete sound;//及时删除防止内存泄露
     if(ui->checkBox_1->isChecked())//根据选项创建不同的地图
     {
-
-        cout<<"here1"<<endl;
-        //w.show();
         this->accept();
-//        GameWindowTwo w;
-//        w.exec();
     }
     else if(ui->checkBox_2->isChecked())//可自定义地图关卡
     {
-        GameWindow w(path1);
-        w.exec();
+        //GameWindow w(path1);
+        //w.exec();
     }
 
 }

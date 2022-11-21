@@ -35,6 +35,10 @@
         <file>boss_attack2.gif</file>
         <file>boss_airAttack.gif</file>
         <file>tower3.gif</file>
+        <file>bullet1.gif</file>
+        <file>bullet2.gif</file>
+        <file>bullet3.gif</file>
+        <file>disppear.gif</file>
     </qresource>
     <qresource prefix="/ music"/>
 </RCC>
