@@ -21,13 +21,14 @@ SOURCES += \
     gamecontroller.cpp \
     gamestart.cpp \
     gamewindow.cpp \
-    gamewindowtwo.cpp \
     load.cpp \
     main.cpp \
+    mainwindow.cpp \
     monster.cpp \
     monstertwo.cpp \
     player.cpp \
     structures.cpp \
+    test.cpp \
     tower.cpp
 
 HEADERS += \
@@ -35,19 +36,22 @@ HEADERS += \
     gamecontroller.h \
     gamestart.h \
     gamewindow.h \
-    gamewindowtwo.h \
     load.h \
+    mainwindow.h \
     monster.h \
     monstertwo.h \
     player.h \
     structures.h \
+    test.h \
     tower.h
 
 FORMS += \
     gamestart.ui \
     gamewindow.ui \
     gamewindowtwo.ui \
-    load.ui
+    load.ui \
+    mainwindow.ui \
+    test.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

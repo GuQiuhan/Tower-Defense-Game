@@ -1,6 +1,11 @@
 #include <QApplication>
 #include <string>
 #include "gamestart.h"
+#include "mainwindow.h"
+#include <QDialog>
+#include <iostream>
+#include "test.h"
+
 using namespace  std;
 string path1="/Users/pro/Desktop/proj2/map1.txt";
 string path2="/Users/pro/Desktop/proj2/map2.txt";
@@ -11,8 +16,15 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     GameStart s;
 
-    s.exec();
+    MainWindow mw;//一定要定义在外面！（虽然我也不知道为什么这里定义在里面行不通）
 
+    if (s.exec()==QDialog::Accepted)
+    {
+        //cout<<"here"<<endl;
+        mw.show();
+        return a.exec();
+    }
+    else return 0;
 
-    return a.exec();
+    //return a.exec();
 }

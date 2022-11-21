@@ -4,8 +4,9 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QAction>
 #include <QGraphicsScene>
-//#include "gamewindowtwo.h"
+
 
 
 class GameController : public QObject
@@ -14,24 +15,25 @@ class GameController : public QObject
 public:
     GameController(QGraphicsScene &scene, QObject *parent = 0);
     ~GameController();
-
+    QAction *getResmueAction(){ return resumeAction;}
+    void setResumeAction(QAction* r){ resumeAction = r; }
 
 public slots:
-//    void pause();
-//    void resume();
-//    void gameOver();
+    void pause();
+    void resume();
+    void gameOver();
 protected:
-//     bool eventFilter(QObject *object, QEvent *event);
+    bool eventFilter(QObject *object, QEvent *event);
 
 private:
-//    void handleKeyPressed(QKeyEvent *event);
+     void handleKeyPressed(QKeyEvent *event);
 
-//    void setResume();
-//    QAction * resumeAction;
+      void setResume();
+      QAction * resumeAction;
       QTimer timer;
       QGraphicsScene &scene;
 
-//    bool isPause;
+      bool isPause;
 };
 
 #endif // GAMECONTROLLER_H

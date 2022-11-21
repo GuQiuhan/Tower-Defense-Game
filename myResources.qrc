@@ -1,16 +1,10 @@
 <RCC>
     <qresource prefix="/image">
-        <file>stone2.png</file>
-        <file>stone3.png</file>
         <file>tower1.png</file>
         <file>tower2.png</file>
         <file>effect1.png</file>
         <file>effect2.png</file>
         <file>effect3.png</file>
-        <file>dest1.jpg</file>
-        <file>stone4.jpg</file>
-        <file>path3.jpg</file>
-        <file>block1.jpg</file>
         <file>monster1.gif</file>
         <file>monster2.gif</file>
         <file>grass1.jpg</file>
@@ -21,6 +15,10 @@
         <file>map2.gif</file>
         <file>photo1.jpg</file>
         <file>photo2.jpg</file>
+        <file>tower4_v2.jpg</file>
+        <file>tower4_v1.jpg</file>
+        <file>tower5_v1.jpg</file>
+        <file>tower5_v2.jpg</file>
     </qresource>
     <qresource prefix="/music"/>
     <qresource prefix="/gif">
@@ -36,6 +34,7 @@
         <file>boss_death.gif</file>
         <file>boss_attack2.gif</file>
         <file>boss_airAttack.gif</file>
+        <file>tower3.gif</file>
     </qresource>
     <qresource prefix="/ music"/>
 </RCC>

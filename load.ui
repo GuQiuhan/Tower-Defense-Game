@@ -65,7 +65,7 @@
     <string notr="true">font: italic 32pt &quot;Trattatello&quot;;</string>
    </property>
    <property name="text">
-    <string>DOGGY GAME</string>
+    <string> Loading  ···</string>
    </property>
   </widget>
  </widget>
