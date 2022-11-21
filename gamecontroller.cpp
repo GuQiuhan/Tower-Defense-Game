@@ -40,13 +40,13 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     QObject(parent),
     scene(scene)
 {
-    timer.start( 1000/33 );//开启充当游戏循环的定时器，定时间隔是 1000 / 33 毫秒，也就是每秒 30（1000 / 33 = 30）帧
-
+    //timer.start( 1000/33 );//开启充当游戏循环的定时器，定时间隔是 1000 / 33 毫秒，也就是每秒 30（1000 / 33 = 30）帧
+    timer.start( 1000);//1秒一帧？取决于各个item的移动速度
     //用于测试
     srand((unsigned)time(NULL));
     int a=rand();
     cout<< a<<endl;
-    Monster* m=new Monster(MonsterPaths[a%2]);
+    Monster* m=new Monster(MonsterPaths[a%2],*this);
     scene.addItem(m);
     MoonTower* t=new MoonTower(100,300);
     scene.addItem(t);
@@ -142,7 +142,7 @@ void GameController::gameOver() //游戏结束，计时器停止
         scene.clear();
 
         srand((unsigned)time(NULL));
-        Monster* m=new Monster(MonsterPaths[rand()%2]);
+        Monster* m=new Monster(MonsterPaths[rand()%2],*this);
         scene.addItem(m);
     } else {
         exit(0);

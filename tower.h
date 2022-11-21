@@ -15,6 +15,8 @@ public:
 
 private:
     QMovie * movie;
+    bool move();
+    void advance(int phase) override; //当调用scene.advance()函数时，会调用每一个item的advance函数
 };
 
 class Tower

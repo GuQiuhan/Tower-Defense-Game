@@ -38,3 +38,13 @@ QPainterPath MoonTower::shape() const //实际的形状
    // p.addEllipse(QPointF(TILE_SIZE / 2, TILE_SIZE / 2), FOOD_RADIUS, FOOD_RADIUS);
     return p;
 }
+
+bool MoonTower::move()
+{
+    return true;
+}
+void MoonTower::advance(int phase)
+{
+    if(!phase) return; //第0阶段
+    move();
+}

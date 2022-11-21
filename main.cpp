@@ -16,11 +16,12 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     GameStart s;
 
-    MainWindow mw;//一定要定义在外面！（虽然我也不知道为什么这里定义在里面行不通）
+   // MainWindow mw;//一定要定义在外面！（虽然我也不知道为什么这里定义在里面行不通）
 
     if (s.exec()==QDialog::Accepted)
     {
         //cout<<"here"<<endl;
+        MainWindow mw;
         mw.show();
         return a.exec();
     }
