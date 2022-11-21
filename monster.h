@@ -16,16 +16,16 @@ using namespace std;
 class Monster:public QGraphicsItem
 {
 private:
-    vector<vector<QPointF>> path;//怪兽的所有路径
+    //vector<vector<QPointF>> path;//怪兽的所有路径
     vector<QPointF> tmp_path;//当前路径（随机选择）
     QPointF tmp;//当前像素位置
     string Pic;//所用的gif路径
     QMovie * movie;
     bool pause;//遇到近战塔需要停止,只有在false时才可以移动
-
+    void move();
 
 public:
-    Monster();//创建时需要给出路径
+    Monster(vector<QPointF> p);//创建时需要给出路径
     virtual void setPic();//虚函数,子类中需要重写以确定自己的图片
     virtual ~Monster();
 

@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QLabel>
 #include <QMovie>
-#include "monstertwo.h"
+#include "monster.h"
 #include <iostream>
 #include <QTimer>
 #include <QPushButton>

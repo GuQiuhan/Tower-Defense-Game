@@ -4,15 +4,49 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <vector>
+#include <iostream>
+using namespace std;
 #include "bullet.h"
+
+//全局变量，map1中怪兽的所有路径
+vector<vector<QPointF>> MonsterPaths={
+    {
+        QPointF(330,0),
+        QPointF(330,100),
+        QPointF(300,125),
+        QPointF(160,125),
+        QPointF(110,175),
+        QPointF(110,430),
+        QPointF(160,480),
+        QPointF(300,480),
+        QPointF(340,450),
+        QPointF(480,450),
+        QPointF(530,475),
+        QPointF(910,475)
+    },
+    {
+        QPointF(860,0),
+        QPointF(860,260),
+        QPointF(825,305),
+        QPointF(700,305),
+        QPointF(650,340),
+        QPointF(650,475),
+        QPointF(910,475)
+    }
+};
 
 GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     QObject(parent),
     scene(scene)
 {
     timer.start( 1000/33 );//开启充当游戏循环的定时器，定时间隔是 1000 / 33 毫秒，也就是每秒 30（1000 / 33 = 30）帧
+
     //用于测试
-    Monster* m=new Monster();
+    srand((unsigned)time(NULL));
+    int a=rand();
+    cout<< a<<endl;
+    Monster* m=new Monster(MonsterPaths[a%2]);
     scene.addItem(m);
     MoonTower* t=new MoonTower(100,300);
     scene.addItem(t);
@@ -107,7 +141,8 @@ void GameController::gameOver() //游戏结束，计时器停止
         connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));//重新开始游戏
         scene.clear();
 
-        Monster* m=new Monster();
+        srand((unsigned)time(NULL));
+        Monster* m=new Monster(MonsterPaths[rand()%2]);
         scene.addItem(m);
     } else {
         exit(0);
