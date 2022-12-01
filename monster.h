@@ -6,6 +6,8 @@
 #include <vector>
 #include <QGraphicsItem>
 #include <QPainter>
+#include <iostream>
+#include <QMovie>
 using namespace std;
 
 class GameController;
@@ -19,7 +21,7 @@ private:
     vector<QPointF> tmp_path;//当前路径（随机选择）
     QPointF tmp;//当前像素位置
     int index;//当前位置于路径中的下标
-    string Pic;//所用的gif路径
+    string Pic;//所用的gif路径,派生类中要使用
     QMovie * movie;//构造gif图片所需
     bool pause;//遇到近战塔需要停止,只有在false时才可以移动
     bool move();//到达终点则返回true
@@ -32,10 +34,133 @@ public:
     virtual void setPic();//虚函数,子类中需要重写以确定自己的图片
     virtual ~Monster();
 
+
+
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
 
+
+};
+
+
+class MonsterFrog:public Monster
+{
+private:
+    string Pic;
+    QMovie * movie;//构造gif图片所需
+public:
+
+    MonsterFrog(vector<QPointF> p,GameController & controller)
+        :Monster(p,controller)
+    {
+        setPic();
+        movie = new QMovie(QString::fromStdString(Pic));
+        movie->start();
+
+    }
+
+    ~MonsterFrog(){delete movie;}
+
+    void setPic(){Pic=":/gif/frog.gif";}
+
+
+protected:
+    QRectF boundingRect() const; //override
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
+
+};
+
+
+class MonsterGhost:public Monster
+{
+private:
+    string Pic;
+    QMovie * movie;//构造gif图片所需
+public:
+
+    MonsterGhost(vector<QPointF> p,GameController & controller)
+        :Monster(p,controller)
+    {
+        setPic();
+        movie = new QMovie(QString::fromStdString(Pic));
+        movie->start();
+
+    }
+
+    ~MonsterGhost(){delete movie;}
+
+    void setPic(){Pic=":/gif/ghost.gif";}
+
+
+protected:
+    QRectF boundingRect() const; //override
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
+
+};
+
+
+class MonsterDino:public Monster
+{
+private:
+    string Pic;
+    QMovie * movie;//构造gif图片所需
+public:
+
+    MonsterDino(vector<QPointF> p,GameController & controller)
+        :Monster(p,controller)
+    {
+        setPic();
+        movie = new QMovie(QString::fromStdString(Pic));
+        movie->start();
+
+    }
+
+    ~MonsterDino(){delete movie;}
+
+    void setPic()
+    {
+        //srand((unsigned)time(NULL));//不可以用时间做随机，因为每5秒更新一次，这时候根据事件产生的随机数就不随机了
+        int a=rand()%5;
+        if(a==0) a++;
+        //cout << a<<endl;
+        Pic=":/gif/Dino"+std::to_string(a)+".gif";//随机产生一个小恐龙
+    }
+
+
+protected:
+    QRectF boundingRect() const; //override
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
+
+};
+
+class MonsterBoss:public Monster
+{
+private:
+    string Pic;
+    QMovie * movie;//构造gif图片所需
+public:
+
+    MonsterBoss(vector<QPointF> p,GameController & controller)
+        :Monster(p,controller)
+    {
+        setPic();
+        movie = new QMovie(QString::fromStdString(Pic));
+        movie->start();
+
+    }
+
+    ~MonsterBoss(){delete movie;}
+
+    void setPic()
+    {
+        Pic=":/gif/skeleton.gif";//随机产生一个小恐龙
+    }
+
+
+protected:
+    QRectF boundingRect() const; //override
+    void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
 
 };
 

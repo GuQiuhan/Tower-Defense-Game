@@ -113,11 +113,11 @@ bool Monster::move()
         {
             qreal k=(tmp_path[index+1].y()-tmp.y())/(tmp_path[index+1].x()-tmp.x());//斜率
 
-            cout<< k<<endl;
+            //cout<< k<<endl;
 
             if(k>0)
             {
-                int preX=tmp.x();
+                qreal preX=tmp.x();
                 if(tmp.x()<tmp_path[index+1].x()) //向右下
                 {
 
@@ -143,7 +143,7 @@ bool Monster::move()
             else if(k<0)
             {
                 k=-k;//绝对值，方便计算
-                int preX=tmp.x();
+                qreal preX=tmp.x();
                 if(tmp.x()<tmp_path[index+1].x()) //向右上
                 {
 
@@ -157,11 +157,13 @@ bool Monster::move()
                 }
                 else if(tmp.x()>tmp_path[index+1].x()) //向左下
                 {
+                    //cout << "here"<<endl;
                     tmp.setX(tmp.x()-0.4);
                     if(tmp.x()<tmp_path[index+1].x())
                         tmp.setX(tmp_path[index+1].x());
                     //根据直线斜率增加y
                     tmp.setY(tmp.y()+(preX-tmp.x())*k);
+
                     if(tmp.y()>tmp_path[index+1].y())
                         tmp.setY(tmp_path[index+1].y());
                 }
@@ -171,12 +173,6 @@ bool Monster::move()
 
 
         setPos(tmp.x(),tmp.y());//重新定位
-        cout<<tmp.x()<<"," <<tmp.y()<<endl;
-        //cout << "here"<<endl;
-//        index++;
-//        tmp=tmp_path[index];
-//        setPos(tmp.x(),tmp.y());//父类函数，更新monster坐标
-
     }
 
 
@@ -192,3 +188,96 @@ void Monster::advance(int step)//step参数为重载时系统给的
     move();//monster移动
 
 }
+
+
+void MonsterFrog::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
+{
+    if (movie && movie->state() == QMovie::Running)
+    {
+
+        //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
+        painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
+        //cout<<movie->currentFrameNumber()<<endl;
+        painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+    }
+
+
+
+}
+
+
+QRectF MonsterFrog::boundingRect() const
+{
+    return QRectF(-MONSTER_SIZE, -MONSTER_SIZE, MONSTER_SIZE*2, MONSTER_SIZE*2);//参数合适，有待调节
+
+}
+
+
+void MonsterGhost::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
+{
+    if (movie && movie->state() == QMovie::Running)
+    {
+
+        //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
+        painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
+        //cout<<movie->currentFrameNumber()<<endl;
+        painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+    }
+
+
+
+}
+
+
+QRectF MonsterGhost::boundingRect() const
+{
+    return QRectF(-MONSTER_SIZE, -MONSTER_SIZE, MONSTER_SIZE*2, MONSTER_SIZE*2);//参数合适，有待调节
+
+}
+
+
+void MonsterDino::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
+{
+    if (movie && movie->state() == QMovie::Running)
+    {
+
+        //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
+        painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
+        //cout<<movie->currentFrameNumber()<<endl;
+        painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+    }
+
+
+
+}
+
+
+QRectF MonsterDino::boundingRect() const
+{
+    return QRectF(-MONSTER_SIZE, -MONSTER_SIZE, MONSTER_SIZE*2, MONSTER_SIZE*2);//参数合适，有待调节
+
+}
+
+void MonsterBoss::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
+{
+    if (movie && movie->state() == QMovie::Running)
+    {
+
+        //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
+        painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
+        //cout<<movie->currentFrameNumber()<<endl;
+        painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+    }
+
+
+
+}
+
+
+QRectF MonsterBoss::boundingRect() const
+{
+    return QRectF(-MONSTER_SIZE-10, -MONSTER_SIZE-50, MONSTER_SIZE*3, MONSTER_SIZE*3);//参数合适，有待调节
+
+}
+
+

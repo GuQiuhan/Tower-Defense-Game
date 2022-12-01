@@ -45,7 +45,14 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     timer.start( 1000/40 );//开启充当游戏循环的定时器，定时间隔是 1000 / 40 毫秒，也就是每秒40帧
     connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance())); //这里的advanced()函数需要重写（？），计时器开始运行即不断调用各个类成员的advance()函数
 
-    Monstertimer.start(5000);//每5秒产生一个怪物
+    Monstertimer.start(3000);//每5秒产生一个怪物
+    //开局先产生一个怪物
+    srand((unsigned)time(NULL));
+    int a=rand();
+    Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+    scene.addItem(m);
+    monsters.push_back(m);
+    //打开怪物生成计时器
     connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
 
     //用于测试
@@ -152,10 +159,74 @@ void GameController::gameOver() //游戏结束，计时器停止
 
 void GameController::addMonster()
 {
-    srand((unsigned)time(NULL));
+    //srand((unsigned)time(NULL));
     int a=rand();
+    int n=monsters.size();
     //cout<< a<<endl;
-    Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
-    scene.addItem(m);
-    monsters.push_back(m);
+    if(n<2)
+    {
+        Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        scene.addItem(m);
+        monsters.push_back(m);
+    }
+    else if(n<3)
+    {
+        MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        scene.addItem(m);
+        monsters.push_back(m);
+    }
+    else if(n<5)
+    {
+        MonsterGhost* m=new MonsterGhost(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        scene.addItem(m);
+        monsters.push_back(m);
+    }
+    else if(n<10)
+    {
+        MonsterDino* m=new MonsterDino(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        scene.addItem(m);
+        monsters.push_back(m);
+    }
+    else if(n<15)
+    {
+        int x=rand();
+        x=x%4;
+        switch(x){
+            case 0:
+            {
+                Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                scene.addItem(m);
+                monsters.push_back(m);
+                break;
+            }
+            case 1:
+            {
+                MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                scene.addItem(m);
+                monsters.push_back(m);
+                break;
+            }
+            case 2:
+            {
+                MonsterGhost* m=new MonsterGhost(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                scene.addItem(m);
+                monsters.push_back(m);
+                break;
+            }
+            case 3:
+            {
+                MonsterDino* m=new MonsterDino(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                scene.addItem(m);
+                monsters.push_back(m);
+                break;
+            }
+        }
+    }
+
+    else if(n==15)//产生最终的boss
+    {
+        MonsterBoss* m=new MonsterBoss(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        scene.addItem(m);
+        monsters.push_back(m);
+    }
 }
