@@ -27,6 +27,10 @@ private:
     bool move();//到达终点则返回true
     GameController &controller;
     void advance(int s);//必须重载！用于计时器刷新时调用
+    void setPause(){pause=true;}
+    void setResume(){pause=false;}
+    qreal sumBlood;//总血量
+    qreal tmpBlood;//当前血量
 public:
     Monster(vector<QPointF> p,GameController & controller);//创建时需要给出路径
     Monster(Monster& m);//拷贝构造函数
@@ -39,7 +43,7 @@ public:
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
-
+    void handleCollisions();
 
 };
 
@@ -49,6 +53,8 @@ class MonsterFrog:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
+    qreal sumBlood;//总血量
+    qreal tmpBlood;//当前血量
 public:
 
     MonsterFrog(vector<QPointF> p,GameController & controller)
@@ -57,6 +63,8 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
+        sumBlood=10;
+        tmpBlood=10;
 
     }
 
@@ -77,6 +85,8 @@ class MonsterGhost:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
+    qreal sumBlood;//总血量
+    qreal tmpBlood;//当前血量
 public:
 
     MonsterGhost(vector<QPointF> p,GameController & controller)
@@ -85,6 +95,8 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
+        sumBlood=10;
+        tmpBlood=10;
 
     }
 
@@ -105,6 +117,8 @@ class MonsterDino:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
+    qreal sumBlood;//总血量
+    qreal tmpBlood;//当前血量
 public:
 
     MonsterDino(vector<QPointF> p,GameController & controller)
@@ -113,6 +127,8 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
+        sumBlood=10;
+        tmpBlood=10;
 
     }
 
@@ -139,6 +155,9 @@ class MonsterBoss:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
+    qreal sumBlood;//总血量
+    qreal tmpBlood;//当前血量
+
 public:
 
     MonsterBoss(vector<QPointF> p,GameController & controller)
@@ -147,6 +166,8 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
+        sumBlood=20;
+        tmpBlood=20;
 
     }
 

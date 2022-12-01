@@ -1,7 +1,18 @@
 #include "monster.h"
 #include <QMovie>
 #include <iostream>
+#include <QList>
+#include <QDebug>
 using namespace std;
+
+enum GameObjectsData {
+    GD_Type
+};
+
+enum GameObjectTypes {
+    GO_Tower,
+    GO_Wall
+};
 
 static const qreal MONSTER_SIZE=30;//怪兽矩阵的边长
 
@@ -17,6 +28,8 @@ Monster::Monster(vector<QPointF> p,GameController & c)//将controller也传过�
     //connect(mMovie, SIGNAL(finished ()),this, SLOT(slot_movieFinish()));
     setPos(tmp.x(),tmp.y());//重制item坐标原点（x,y相对于scene坐标系）
     pause=false;
+    sumBlood=10;
+    tmpBlood=10;
 }
 
 Monster::Monster(Monster& m)
@@ -51,7 +64,12 @@ void Monster::paint(QPainter * painter, const QStyleOptionGraphicsItem * option,
         painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
         //cout<<movie->currentFrameNumber()<<endl;
         painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+
+        painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
+        qreal rate = tmpBlood/sumBlood;//计算比例
+        painter->drawRect(-MONSTER_SIZE,-MONSTER_SIZE-8,rate*MONSTER_SIZE*2,6);//绘制矩形
     }
+
 
 
 
@@ -65,6 +83,7 @@ QRectF Monster::boundingRect() const
 
 bool Monster::move()
 {
+    if(pause==true) return false;//停止运动
     if(tmp.x()==tmp_path[tmp_path.size()-1].x()&&tmp.y()==tmp_path[tmp_path.size()-1].y())//到达路径终点
     {
         return true;
@@ -186,9 +205,28 @@ void Monster::advance(int step)//step参数为重载时系统给的
 
     //更新monster
     move();//monster移动
+    handleCollisions();
 
 }
 
+
+void Monster::handleCollisions()
+{
+
+
+    QList<QGraphicsItem *> collisions = collidingItems();
+    foreach (QGraphicsItem *collidingItem, collisions)
+    {
+        qDebug()<<collidingItem->y();
+        if (collidingItem->data(GD_Type) == GO_Tower) //撞到了近战塔
+        {
+
+            setPause();
+        }
+    }
+
+
+}
 
 void MonsterFrog::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
 {
@@ -199,6 +237,10 @@ void MonsterFrog::paint(QPainter * painter, const QStyleOptionGraphicsItem * opt
         painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
         //cout<<movie->currentFrameNumber()<<endl;
         painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+
+        painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
+        qreal rate = tmpBlood/sumBlood;//计算比例
+        painter->drawRect(-MONSTER_SIZE,-MONSTER_SIZE-8,rate*MONSTER_SIZE*2,6);//绘制矩形
     }
 
 
@@ -222,6 +264,10 @@ void MonsterGhost::paint(QPainter * painter, const QStyleOptionGraphicsItem * op
         painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
         //cout<<movie->currentFrameNumber()<<endl;
         painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+
+        painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
+        qreal rate = tmpBlood/sumBlood;//计算比例
+        painter->drawRect(-MONSTER_SIZE,-MONSTER_SIZE-8,rate*MONSTER_SIZE*2,6);//绘制矩形
     }
 
 
@@ -245,6 +291,10 @@ void MonsterDino::paint(QPainter * painter, const QStyleOptionGraphicsItem * opt
         painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
         //cout<<movie->currentFrameNumber()<<endl;
         painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+
+        painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
+        qreal rate = tmpBlood/sumBlood;//计算比例
+        painter->drawRect(-MONSTER_SIZE,-MONSTER_SIZE-8,rate*MONSTER_SIZE*2,6);//绘制矩形
     }
 
 
@@ -267,6 +317,10 @@ void MonsterBoss::paint(QPainter * painter, const QStyleOptionGraphicsItem * opt
         painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
         //cout<<movie->currentFrameNumber()<<endl;
         painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
+
+        painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
+        qreal rate = tmpBlood/sumBlood;//计算比例
+        painter->drawRect(-MONSTER_SIZE-10,-MONSTER_SIZE-50-8,rate*MONSTER_SIZE*3,6);//绘制矩形
     }
 
 

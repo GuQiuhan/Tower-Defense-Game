@@ -36,6 +36,9 @@ vector<vector<QPointF>> MonsterPaths={
     }
 };
 
+
+
+
 GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     QObject(parent),
     scene(scene)

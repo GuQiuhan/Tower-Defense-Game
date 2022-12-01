@@ -2,6 +2,15 @@
 #include <QPainter>
 #include <QMovie>
 
+enum GameObjectsData {
+    GD_Type
+};
+
+enum GameObjectTypes {
+    GO_Tower,
+    GO_Wall
+};
+
 static const qreal TOWER_SIZE=100;//塔防矩形的边长
 
 MoonTower::MoonTower(qreal x, qreal y)
@@ -12,7 +21,8 @@ MoonTower::MoonTower(qreal x, qreal y)
 
     setPos(x, y);
 
-    //setData(GD_Type, GO_Food);//为该图形元素添加额外的数据信息，类似于散列一样的键值对的形式
+
+    setData(Type, "2");//为该图形元素添加额外的数据信息，类似于散列一样的键值对的形式
 }
 
 QRectF MoonTower::boundingRect() const
@@ -39,12 +49,9 @@ QPainterPath MoonTower::shape() const //实际的形状
     return p;
 }
 
-bool MoonTower::move()
-{
-    return true;
-}
+
 void MoonTower::advance(int phase)
 {
     if(!phase) return; //第0阶段
-    move();
+    //move();
 }
