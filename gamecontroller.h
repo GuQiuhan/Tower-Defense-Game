@@ -6,6 +6,9 @@
 #include <QTimer>
 #include <QAction>
 #include <QGraphicsScene>
+#include <vector>
+#include "monster.h"
+using namespace std;
 
 
 
@@ -19,9 +22,10 @@ public:
     void setResumeAction(QAction* r){ resumeAction = r; }
 
 public slots:
-    void pause();
-    void resume();
+    void pause();//暂停
+    void resume();//继续
     void gameOver();
+    void addMonster();
 protected:
     bool eventFilter(QObject *object, QEvent *event);
 
@@ -32,8 +36,12 @@ private:
       QAction * resumeAction;
       QTimer timer;
       QGraphicsScene &scene;
+      QTimer Monstertimer;//用于生产monster
 
       bool isPause;
+      vector<Monster*> monsters;//界面中的所有monster
+
+
 };
 
 #endif // GAMECONTROLLER_H

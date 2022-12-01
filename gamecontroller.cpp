@@ -20,14 +20,14 @@ vector<vector<QPointF>> MonsterPaths={
         QPointF(110,430),
         QPointF(160,480),
         QPointF(300,480),
-        QPointF(340,450),
-        QPointF(480,450),
+        QPointF(340,440),
+        QPointF(480,440),
         QPointF(530,475),
         QPointF(910,475)
     },
     {
-        QPointF(860,0),
-        QPointF(860,260),
+        QPointF(870,0),
+        QPointF(870,260),
         QPointF(825,305),
         QPointF(700,305),
         QPointF(650,340),
@@ -39,23 +39,24 @@ vector<vector<QPointF>> MonsterPaths={
 GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     QObject(parent),
     scene(scene)
-{
-    //timer.start( 1000/33 );//开启充当游戏循环的定时器，定时间隔是 1000 / 33 毫秒，也就是每秒 30（1000 / 33 = 30）帧
-    timer.start( 1000);//1秒一帧？取决于各个item的移动速度
+{   
+    scene.installEventFilter(this);//添加了事件过滤器，以便监听键盘事件
+
+    timer.start( 1000/40 );//开启充当游戏循环的定时器，定时间隔是 1000 / 40 毫秒，也就是每秒40帧
+    connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance())); //这里的advanced()函数需要重写（？），计时器开始运行即不断调用各个类成员的advance()函数
+
+    Monstertimer.start(5000);//每5秒产生一个怪物
+    connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
+
     //用于测试
-    srand((unsigned)time(NULL));
-    int a=rand();
-    cout<< a<<endl;
-    Monster* m=new Monster(MonsterPaths[a%2],*this);
-    scene.addItem(m);
     MoonTower* t=new MoonTower(100,300);
     scene.addItem(t);
     bullet* b=new bullet(QPointF(100,100),QPointF(200,200));
     scene.addItem(b);
 
 
-    scene.installEventFilter(this);//添加了事件过滤器，以便监听键盘事件
-    connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance())); //这里的advanced()函数需要重写（？）
+
+
     isPause = false;
 }
 
@@ -147,4 +148,14 @@ void GameController::gameOver() //游戏结束，计时器停止
     } else {
         exit(0);
     }
+}
+
+void GameController::addMonster()
+{
+    srand((unsigned)time(NULL));
+    int a=rand();
+    //cout<< a<<endl;
+    Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+    scene.addItem(m);
+    monsters.push_back(m);
 }

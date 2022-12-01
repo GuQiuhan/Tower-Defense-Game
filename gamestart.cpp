@@ -67,7 +67,7 @@ void GameStart::loading()
     this->close();
     Load l;
     l.exec();
-    q=new QTimer();
+    //q=new QTimer();
     //connect(q,SIGNAL(timeout()),this,SLOT(start()));
     //q->start(2000);
     //sleep(4);
@@ -111,7 +111,7 @@ bool GameStart::eventFilter(QObject* watched, QEvent* event)
                                 border-style:dotted;\
                         }");
 
-                //loading();
+                //loading(); //这里要进行补充！！
                 start();
                 return true;
             }

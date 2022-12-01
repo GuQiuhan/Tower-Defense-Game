@@ -19,6 +19,18 @@ Monster::Monster(vector<QPointF> p,GameController & c)//将controller也传过�
     pause=false;
 }
 
+Monster::Monster(Monster& m)
+    :controller(m.controller)
+    ,pause(m.pause)
+    ,tmp_path(m.tmp_path)
+    ,tmp(m.tmp)
+    ,index(m.index)
+    ,Pic(m.Pic)
+    ,movie(m.movie)
+{
+
+}
+
 
 void Monster::setPic()
 {
@@ -27,7 +39,7 @@ void Monster::setPic()
 
 Monster::~Monster()
 {
-
+    delete movie;
 }
 
 void Monster::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
@@ -36,7 +48,7 @@ void Monster::paint(QPainter * painter, const QStyleOptionGraphicsItem * option,
     {
 
         //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
-        painter->drawImage(boundingRect(), movie->currentImage());
+        painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
         //cout<<movie->currentFrameNumber()<<endl;
         painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
     }
@@ -53,20 +65,117 @@ QRectF Monster::boundingRect() const
 
 bool Monster::move()
 {
-    if(index==tmp_path.size()-1)//到达路径终点
+    if(tmp.x()==tmp_path[tmp_path.size()-1].x()&&tmp.y()==tmp_path[tmp_path.size()-1].y())//到达路径终点
     {
         return true;
     }
 
     else
     {
-        index++;
-        //qreal dx=tmp_path[index].x()-tmp_path[index-1].x();
-        //qreal dy=tmp_path[index].y()-tmp_path[index-1].y();
-        tmp=tmp_path[index];
-        //boundingRect().adjust(dx,dy,0,0);
-        setPos(tmp.x(),tmp.y());
-        //cout<<tmp.x()<<"," <<tmp.y()<<endl;
+        if(tmp.x()==tmp_path[index+1].x()&&tmp.y()==tmp_path[index+1].y()) index++;//index应当不会越界
+
+        if(tmp.x()==tmp_path[index+1].x())//竖线
+        {
+            if(tmp.y()<tmp_path[index+1].y()) //向下
+            {
+                tmp.setY(tmp.y()+1);
+                if(tmp.y()>tmp_path[index+1].y())
+                    tmp.setY(tmp_path[index+1].y());
+            }
+
+            else//向上
+            {
+                tmp.setY(tmp.y()-1);
+                if(tmp.y()<tmp_path[index+1].y())
+                    tmp.setY(tmp_path[index+1].y());
+            }
+
+        }
+
+        else if(tmp.y()==tmp_path[index+1].y())//横线
+        {
+            if(tmp.x()<tmp_path[index+1].x()) //向右
+            {
+                tmp.setX(tmp.x()+1);
+                if(tmp.x()>tmp_path[index+1].x())
+                    tmp.setX(tmp_path[index+1].x());
+            }
+
+            else//向左
+            {
+                tmp.setX(tmp.x()-1);
+                if(tmp.x()<tmp_path[index+1].x())
+                    tmp.setX(tmp_path[index+1].x());
+            }
+        }
+
+        else//斜线
+        {
+            qreal k=(tmp_path[index+1].y()-tmp.y())/(tmp_path[index+1].x()-tmp.x());//斜率
+
+            cout<< k<<endl;
+
+            if(k>0)
+            {
+                int preX=tmp.x();
+                if(tmp.x()<tmp_path[index+1].x()) //向右下
+                {
+
+                    tmp.setX(tmp.x()+0.4);
+                    if(tmp.x()>tmp_path[index+1].x())
+                        tmp.setX(tmp_path[index+1].x());
+                    //根据直线斜率增加y
+                    tmp.setY(tmp.y()+(tmp.x()-preX)*k);
+                    if(tmp.y()>tmp_path[index+1].y())
+                        tmp.setY(tmp_path[index+1].y());
+                }
+                else if(tmp.x()>tmp_path[index+1].x()) //向左上
+                {
+                    tmp.setX(tmp.x()-0.4);
+                    if(tmp.x()<tmp_path[index+1].x())
+                        tmp.setX(tmp_path[index+1].x());
+                    //根据直线斜率增加y
+                    tmp.setY(tmp.y()-(preX-tmp.x())*k);
+                    if(tmp.y()<tmp_path[index+1].y())
+                        tmp.setY(tmp_path[index+1].y());
+                }
+            }
+            else if(k<0)
+            {
+                k=-k;//绝对值，方便计算
+                int preX=tmp.x();
+                if(tmp.x()<tmp_path[index+1].x()) //向右上
+                {
+
+                    tmp.setX(tmp.x()+0.4);
+                    if(tmp.x()>tmp_path[index+1].x())
+                        tmp.setX(tmp_path[index+1].x());
+                    //根据直线斜率增加y
+                    tmp.setY(tmp.y()-(tmp.x()-preX)*k);
+                    if(tmp.y()<tmp_path[index+1].y())
+                        tmp.setY(tmp_path[index+1].y());
+                }
+                else if(tmp.x()>tmp_path[index+1].x()) //向左下
+                {
+                    tmp.setX(tmp.x()-0.4);
+                    if(tmp.x()<tmp_path[index+1].x())
+                        tmp.setX(tmp_path[index+1].x());
+                    //根据直线斜率增加y
+                    tmp.setY(tmp.y()+(preX-tmp.x())*k);
+                    if(tmp.y()>tmp_path[index+1].y())
+                        tmp.setY(tmp_path[index+1].y());
+                }
+            }
+        }
+
+
+
+        setPos(tmp.x(),tmp.y());//重新定位
+        cout<<tmp.x()<<"," <<tmp.y()<<endl;
+        //cout << "here"<<endl;
+//        index++;
+//        tmp=tmp_path[index];
+//        setPos(tmp.x(),tmp.y());//父类函数，更新monster坐标
 
     }
 
@@ -75,9 +184,11 @@ bool Monster::move()
 
 }
 
-void Monster::advance(int step)
+void Monster::advance(int step)//step参数为重载时系统给的
 {
     if(!step) return;
-    move();
+
+    //更新monster
+    move();//monster移动
 
 }

@@ -103,7 +103,7 @@ void MainWindow::test()
 
 }
 
-void MainWindow::createActions()
+void MainWindow::createActions() //菜单栏
 {
     newGameAction = new QAction(tr("&New Game"), this);
     newGameAction->setShortcuts(QKeySequence::New);

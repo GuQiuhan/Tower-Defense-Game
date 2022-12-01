@@ -31,7 +31,7 @@ private:
 //    QMediaPlayer * player;
 //    QMediaPlaylist * playlist;
     QSound *sound;//尝试得最终只能使用sound来进行播放
-    QTimer* q;
+    //QTimer* q;
 
 //private slots:
 //    void start();
