@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     bullet.cpp \
+    customscene.cpp \
     findmonsterway.cpp \
     gamecontroller.cpp \
     gamestart.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
 
 HEADERS += \
     bullet.h \
+    customscene.h \
     findmonsterway.h \
     gamecontroller.h \
     gamestart.h \

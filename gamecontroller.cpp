@@ -8,6 +8,7 @@
 #include <iostream>
 using namespace std;
 #include "bullet.h"
+#include <QDebug>
 
 //全局变量，map1中怪兽的所有路径
 vector<vector<QPointF>> MonsterPaths={
@@ -58,11 +59,15 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     //打开怪物生成计时器
     connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
 
+    Round=0;
     //用于测试
-    MoonTower* t=new MoonTower(100,300);
+    MoonTower* t=new MoonTower(150,400);
+    //MoonTower* t=new MoonTower(330,100);
+    qDebug()<<t->x()<<","<<t->y();
+    //t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
     scene.addItem(t);
     bullet* b=new bullet(QPointF(100,100),QPointF(200,200));
-    scene.addItem(b);
+    //scene.addItem(b);
 
 
 
@@ -78,17 +83,17 @@ GameController::~GameController()//释放内存
 
 void GameController::pause()//断开定时器的信号
 {
-    disconnect(&timer, SIGNAL(timeout()),
-               &scene,  SLOT(advance()));
+    //断开所有计时器
+    disconnect(&timer, SIGNAL(timeout()),&scene,  SLOT(advance()));
+    disconnect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
     isPause = true;
     setResume();
 }
 
 void GameController::resume()//连接定时器的信号
 {
-    connect(&timer, SIGNAL(timeout()),
-            &scene,  SLOT(advance()));
-
+    connect(&timer, SIGNAL(timeout()),&scene,  SLOT(advance()));
+    connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
     isPause = false;
     setResume();
 }
@@ -151,7 +156,7 @@ void GameController::gameOver() //游戏结束，计时器停止
                             QMessageBox::Yes)) {
         connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));//重新开始游戏
         scene.clear();
-
+        Round++;
         srand((unsigned)time(NULL));
         Monster* m=new Monster(MonsterPaths[rand()%2],*this);
         scene.addItem(m);
@@ -232,4 +237,50 @@ void GameController::addMonster()
         scene.addItem(m);
         monsters.push_back(m);
     }
+}
+
+
+void GameController::addTower(QString type,QPointF pos)
+{
+    if(type=="MoonTower")
+    {
+        MoonTower* t=new MoonTower(pos.x(),pos.y());
+
+        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        scene.addItem(t);
+    }
+    else if(type=="GunTower1")
+    {
+        GunTowerOne* t=new GunTowerOne(pos.x(),pos.y());
+
+        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        scene.addItem(t);
+    }
+    else if(type=="GunTower2")
+    {
+        GunTowerTwo* t=new GunTowerTwo(pos.x(),pos.y());
+
+        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        scene.addItem(t);
+    }
+    else if(type=="GunTower3")
+    {
+        GunTowerThree* t=new GunTowerThree(pos.x(),pos.y());
+
+        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        scene.addItem(t);
+    }
+    else if(type=="GunTower4")
+    {
+        GunTowerFour* t=new GunTowerFour(pos.x(),pos.y());
+
+        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        scene.addItem(t);
+    }
+
+}
+
+int GameController::getRound()
+{
+    return Round;
 }

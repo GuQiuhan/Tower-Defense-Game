@@ -11,7 +11,8 @@ enum GameObjectsData {
 
 enum GameObjectTypes {
     GO_Tower,
-    GO_Wall
+    GO_Monster,
+    GO_Bullet
 };
 
 static const qreal MONSTER_SIZE=30;//怪兽矩阵的边长
@@ -30,6 +31,7 @@ Monster::Monster(vector<QPointF> p,GameController & c)//将controller也传过�
     pause=false;
     sumBlood=10;
     tmpBlood=10;
+    setData(GD_Type, GO_Monster);
 }
 
 Monster::Monster(Monster& m)
@@ -217,7 +219,7 @@ void Monster::handleCollisions()
     QList<QGraphicsItem *> collisions = collidingItems();
     foreach (QGraphicsItem *collidingItem, collisions)
     {
-        qDebug()<<collidingItem->y();
+        //qDebug()<< collidingItem->data(GD_Type);
         if (collidingItem->data(GD_Type) == GO_Tower) //撞到了近战塔
         {
 

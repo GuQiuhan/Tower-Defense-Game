@@ -7,26 +7,48 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QGraphicsSceneDragDropEvent>
+#include <QMimeData>
+#include <QDebug>
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    scene(new QGraphicsScene(this)),
+    scene(new CustomScene(this)),
     gamecontroller(new GameController(*scene,this))//游戏控制器，创建即游戏开始
 {
     ui->setupUi(this);
+    scene->setController(gamecontroller);
     InitBackground();//初始化背景
+    InitListWidget();//初始化塔防栏
     createActions();//增加菜单栏
     createMenus();
 
     test();//！测试路线，发行时删除！
 
 
+    setAcceptDrops(true);		//设置：接受拖放
+    ui->listWidget->setAcceptDrops(false);//list控件不支持drag，所以松开鼠标时icon不会移位
+
 }
 
 void MainWindow::InitBackground()
 {
+    //左上角标签
+    ui->lineEdit->setStyleSheet("background:transparent;border-width:0;border-style:outset;color: rgb(128, 0, 2)");
+    ui->lineEdit_2->setStyleSheet("background:transparent;border-width:0;border-style:outset;color: rgb(128, 0, 2)");
+    QFont font;
+    font.setFamily("Trattatello");
+    font.setPixelSize(20);
+    font.setBold(true);
+    ui->lineEdit->setFont(font);
+    ui->lineEdit_2->setFont(font);
+    ui->lineEdit->setText("Your Blood Now: 100/100");
+    QString s="Round: ";
+    s+=QString::number(gamecontroller->getRound());
+    ui->lineEdit_2->setText(s);
+    //场景
     scene->setSceneRect(0, 0, 900, 550);//设置坐标系，此时坐标（0，0）在窗口左上角
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setStyleSheet("background: transparent");
@@ -44,6 +66,38 @@ void MainWindow::InitBackground()
     // 将label添加到场景中
     //labelProxy= scene->addWidget(label);//scene->addWidget返回一个代理
 
+
+}
+
+
+void MainWindow::InitListWidget()
+{
+    ui->listWidget->setViewMode(QListView::IconMode);
+    ui->listWidget->setFlow(QListView::TopToBottom);
+    ui->listWidget->setIconSize(QSize(100,70));//设置icon大小
+    //ui->listWidget->setGridSize(QSize(50, 20));
+    QFont font;
+    font.setFamily("American Typewriter");
+    font.setPixelSize(10);
+    font.setBold(true);
+    QListWidgetItem *item1 = new QListWidgetItem(QIcon(":/image/MoonTower.jpg"), "MoonTower");
+    item1->setFont(font);
+    //item1->setBackground(QColor(204,204,204));
+    QListWidgetItem *item2 = new QListWidgetItem(QIcon(":/image/tower4_v1.jpg"), "GunTower1");
+    item2->setFont(font);
+    QListWidgetItem *item3 = new QListWidgetItem(QIcon(":/image/tower4_v2.jpg"), "GunTower3");
+    item3->setFont(font);
+    QListWidgetItem *item4 = new QListWidgetItem(QIcon(":/image/tower5_v1.jpg"), "GunTower2");
+    item4->setFont(font);
+    QListWidgetItem *item5 = new QListWidgetItem(QIcon(":/image/tower5_v2.jpg"), "GunTower4");
+    item5->setFont(font);
+
+    ui->listWidget->setDragEnabled(true);
+    ui->listWidget->addItem(item2);
+    ui->listWidget->addItem(item4);
+    ui->listWidget->addItem(item3);
+    ui->listWidget->addItem(item5);
+    ui->listWidget->addItem(item1);
 
 }
 MainWindow::~MainWindow()//释放内存
@@ -176,4 +230,7 @@ void MainWindow::gameHelp()
     QMessageBox::about(this, tr("Game Help"), tr("Learn it by yourself hahaha ~"
         "<p>Space - pause & resume"));
 }
+
+
+
 

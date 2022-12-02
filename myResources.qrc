@@ -19,6 +19,7 @@
         <file>tower4_v1.jpg</file>
         <file>tower5_v1.jpg</file>
         <file>tower5_v2.jpg</file>
+        <file>MoonTower.jpg</file>
     </qresource>
     <qresource prefix="/music"/>
     <qresource prefix="/gif">
@@ -34,11 +35,11 @@
         <file>boss_death.gif</file>
         <file>boss_attack2.gif</file>
         <file>boss_airAttack.gif</file>
-        <file>tower3.gif</file>
         <file>bullet1.gif</file>
         <file>bullet2.gif</file>
         <file>bullet3.gif</file>
         <file>disppear.gif</file>
+        <file>tower3.gif</file>
     </qresource>
     <qresource prefix="/ music"/>
 </RCC>

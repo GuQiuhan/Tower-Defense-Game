@@ -4,6 +4,18 @@
 
 static const qreal BULLET_SIZE=20;//子弹矩形的边长，合适待调整
 
+
+enum GameObjectsData {
+    GD_Type
+};
+
+enum GameObjectTypes {
+    GO_Tower,
+    GO_Monster,
+    GO_Bullet
+};
+
+
 bullet::bullet(QPointF s, QPointF d)
 {
     movie = new QMovie(QString::fromStdString(":/gif/bullet1.gif"));
@@ -13,6 +25,8 @@ bullet::bullet(QPointF s, QPointF d)
     dest=d;
 
     setPos(s.x(),s.y());
+    setData(GD_Type, GO_Bullet);
+
 }
 
 

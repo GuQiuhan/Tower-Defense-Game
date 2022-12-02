@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 #include "gamecontroller.h"
+#include "customscene.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,10 +21,12 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QGraphicsScene *scene;
+    //QGraphicsScene *scene;
+    CustomScene* scene;
     //QGraphicsProxyWidget *labelProxy;//背景widget的代理
     GameController* gamecontroller;
     void InitBackground();
+    void InitListWidget();
     void test();//用来调试地图路径坐标
 
     void createActions();
@@ -36,6 +39,9 @@ private:
     QAction *gameHelpAction;
     QAction *aboutAction;
     QAction *aboutQtAction;
+
+
+
 
 private slots:
     //void adjustViewSize();

@@ -35,6 +35,9 @@
      <height>32</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">font: 13pt &quot;American Typewriter&quot;;</string>
+   </property>
    <property name="text">
     <string>PushButton</string>
    </property>
