@@ -6,16 +6,6 @@
 static const qreal BULLET_SIZE=15;//子弹矩形的边长，合适待调整
 static const int speed=10;
 
-enum GameObjectsData {
-    GD_Type
-};
-
-enum GameObjectTypes {
-    GO_Tower,
-    GO_Monster,
-    GO_Bullet
-};
-
 
 bullet::bullet(QPointF s, QPointF d,GameController& g)
     :controller(g)
@@ -59,7 +49,7 @@ void bullet::advance(int step)//step参数为重载时系统给的
     {
         controller.deleteBullet(this);
     }
-   // handleCollisions();
+    handleCollisions();
 
 }
 
@@ -145,7 +135,55 @@ bool bullet::move()//scene是910*560
 
 
     setPos(tmp.x(),tmp.y());//重新定位
-    qDebug()<<tmp;
+    //qDebug()<<tmp;
 
     return false;
+}
+
+void bullet::handleCollisions()//1号子弹，怪兽打塔，所以遇到塔自己消失
+{
+    QList<QGraphicsItem *> collisions = collidingItems();
+    foreach (QGraphicsItem *collidingItem, collisions)
+    {
+        if(collidingItem->data(GD_Type) == GO_GunTower)
+        {
+           controller.deleteBullet(this);
+        }
+    }
+}
+void bulletTwo::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
+{
+    if (movie && movie->state() == QMovie::Running)
+    {
+
+        //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
+        painter->drawImage(boundingRect(), movie->currentImage());
+        painter->drawRect(boundingRect());
+    }
+}
+
+void bulletTwo::advance(int step)//step参数为重载时系统给的
+{
+    if(!step) return;
+
+    //更新monster
+    if(move())//monster移动
+    {
+        controller.deleteBullet(this);
+    }
+
+    handleCollisions();
+}
+
+void bulletTwo::handleCollisions()//2号子弹，塔打怪兽，所以遇到怪兽自己消失
+{
+    QList<QGraphicsItem *> collisions = collidingItems();
+    foreach (QGraphicsItem *collidingItem, collisions)
+    {
+        if(collidingItem->data(GD_Type) == GO_Monster)
+        {
+           controller.deleteBullet(this);
+        }
+    }
+
 }

@@ -58,11 +58,11 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     monsters.push_back(m);
     MonsterNumberChange();
     //打开怪物生成计时器
-    connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
+    //connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
 
     Round=0;
     //用于测试
-    MoonTower* t=new MoonTower(150,400);
+    MoonTower* t=new MoonTower(150,400,*this);
     towers.push_back(t);
     //MoonTower* t=new MoonTower(330,100);
     //qDebug()<<t->x()<<","<<t->y();
@@ -276,35 +276,35 @@ void GameController::addTower(QString type,QPointF pos)
 {
     if(type=="MoonTower")
     {
-        MoonTower* t=new MoonTower(pos.x(),pos.y());
+        MoonTower* t=new MoonTower(pos.x(),pos.y(),*this);
 
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower1")
     {
-        GunTowerOne* t=new GunTowerOne(pos.x(),pos.y());
+        GunTowerOne* t=new GunTowerOne(pos.x(),pos.y(),*this);
 
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower2")
     {
-        GunTowerTwo* t=new GunTowerTwo(pos.x(),pos.y());
+        GunTowerTwo* t=new GunTowerTwo(pos.x(),pos.y(),*this);
 
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower3")
     {
-        GunTowerThree* t=new GunTowerThree(pos.x(),pos.y());
+        GunTowerThree* t=new GunTowerThree(pos.x(),pos.y(),*this);
 
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower4")
     {
-        GunTowerFour* t=new GunTowerFour(pos.x(),pos.y());
+        GunTowerFour* t=new GunTowerFour(pos.x(),pos.y(),*this);
 
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
@@ -347,5 +347,57 @@ void GameController::deleteBullet(bullet* b)
         }
     }
 
+
+}
+
+void GameController::deleteMonster(Monster* m)
+{
+    scene.removeItem(m);//删除图元
+    for( vector<Monster*>::iterator it = monsters.begin(); it != monsters.end(); it++ )
+    {
+        if( *it == m )
+        {
+           delete *it;//释放内存
+            *it=NULL;
+           it= monsters.erase(it);
+           break;
+        }
+    }
+
+
+}
+
+void GameController::deleteTower(MoonTower* t)
+{
+    scene.removeItem(t);//删除图元
+    for( vector<MoonTower*>::iterator it = towers.begin(); it != towers.end(); it++ )
+    {
+        if( *it == t )
+        {
+           delete *it;//释放内存
+            *it=NULL;
+           it= towers.erase(it);
+           break;
+        }
+    }
+
+
+}
+
+
+void GameController::Shoot(Monster* m,QGraphicsItem* t)
+{
+    bullet* b=new bullet(m->pos(),t->pos(),*this);//发射一号子弹
+    scene.addItem(b);
+    bullets.push_back(b);
+    cout <<"bullet1"<<endl;
+}
+
+void GameController::Shoot(QGraphicsItem* t,Monster* m)
+{
+    bulletTwo* b=new bulletTwo(m->pos(),t->pos(),*this);//发射2号子弹
+    scene.addItem(b);
+    bullets.push_back(b);
+    cout <<"bullet2"<<endl;
 
 }

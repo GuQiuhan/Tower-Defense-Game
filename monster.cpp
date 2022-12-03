@@ -3,17 +3,11 @@
 #include <iostream>
 #include <QList>
 #include <QDebug>
+#include "gamecontroller.h"
 using namespace std;
 
-enum GameObjectsData {
-    GD_Type
-};
 
-enum GameObjectTypes {
-    GO_Tower,
-    GO_Monster,
-    GO_Bullet
-};
+
 
 static const qreal MONSTER_SIZE=30;//怪兽矩阵的边长
 
@@ -32,6 +26,10 @@ Monster::Monster(vector<QPointF> p,GameController & c)//将controller也传过�
     sumBlood=10;
     tmpBlood=10;
     setData(GD_Type, GO_Monster);
+    time1=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//获取系统时间，单位为毫秒
+    time2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    time3=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//获取系统时间，单位为毫秒
+    time4=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
 Monster::Monster(Monster& m)
@@ -82,6 +80,7 @@ QRectF Monster::boundingRect() const
     return QRectF(-MONSTER_SIZE, -MONSTER_SIZE, MONSTER_SIZE*2, MONSTER_SIZE*2);//参数合适，有待调节
 
 }
+
 
 bool Monster::move()
 {
@@ -214,9 +213,8 @@ void Monster::advance(int step)//step参数为重载时系统给的
 
 void Monster::handleCollisions()
 {
-
-
     QList<QGraphicsItem *> collisions = collidingItems();
+    bool flag=true;
     foreach (QGraphicsItem *collidingItem, collisions)
     {
         //qDebug()<< collidingItem->data(GD_Type);
@@ -224,9 +222,43 @@ void Monster::handleCollisions()
         {
 
             setPause();
+            flag=false;
+        }
+        if(collidingItem->data(GD_Type) == GO_GunTower)
+        {
+            //使用时间判断，防止一直在打子弹
+            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            if(tmp-time1>1000)
+            {
+                //cout<< "s"<<endl;
+                controller.Shoot(this,collidingItem);
+                time1=tmp;
+            }
+            else if(tmp-time2>1000)
+            {
+                controller.Shoot(this,collidingItem);
+                time2=tmp;
+            }
+            if(tmp-time3>1000)
+            {
+                controller.Shoot(collidingItem,this);
+                time3=tmp;
+            }
+            else if(tmp-time4>1000)
+            {
+                controller.Shoot(collidingItem,this);
+                time4=tmp;
+            }
+        }
+        if(collidingItem->data(GD_Type) == GO_Bullet2)//2号子弹，表示被击中
+        {
+            tmpBlood-=2;
+            cout<< tmpBlood<<endl;
+            if(tmpBlood<=0){ controller.deleteMonster(this); }
         }
     }
 
+    if(flag) setResume();
 
 }
 

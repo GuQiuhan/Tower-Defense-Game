@@ -1,11 +1,14 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 
-
-struct Pos //坐标结构
+struct Pos
 {
-    int x,y;
-    Pos(int a=0,int b=0){x=a,y=b;}
+    int x;
+    int y;
+    Pos(int a, int b){x=1,y=b;}
 };
+
+
+
 
 #endif // STRUCTURES_H

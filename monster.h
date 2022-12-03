@@ -31,6 +31,10 @@ private:
     void setResume(){pause=false;}
     qreal sumBlood;//总血量
     qreal tmpBlood;//当前血量
+    long long time1;//两个计时器，一起用于发射子弹的时间间隔控制
+    long long time2;
+    long long time3;//两个计时器，一起用于塔发射子弹的时间间隔控制
+    long long time4;
 public:
     Monster(vector<QPointF> p,GameController & controller);//创建时需要给出路径
     Monster(Monster& m);//拷贝构造函数
@@ -45,6 +49,7 @@ protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
     void handleCollisions();
+
 
 };
 

@@ -13,6 +13,7 @@
 using namespace std;
 
 class bullet;
+class MoonTower;
 
 class GameController : public QObject
 {
@@ -23,6 +24,11 @@ public:
     QAction *getResmueAction(){ return resumeAction;}
     void setResumeAction(QAction* r){ resumeAction = r; }
     void deleteBullet(bullet* b);
+    void deleteMonster(Monster* m);
+    void deleteTower(MoonTower* t);
+    void Shoot(Monster* m,QGraphicsItem* t);//怪兽打塔，1号子弹
+    void Shoot(QGraphicsItem* t,Monster* m);//塔打怪兽，2号子弹
+    //void Shoot(MoonTower* m,QGraphicsItem* t);//塔打怪兽，2号子弹
 public slots:
     void pause();//暂停
     void resume();//继续
