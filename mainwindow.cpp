@@ -44,11 +44,15 @@ void MainWindow::InitBackground()
     font.setBold(true);
     ui->lineEdit->setFont(font);
     ui->lineEdit_2->setFont(font);
-    ui->lineEdit->setText("Your Blood Now: 100/100");
-    QString s="Round: ";
+    QString s="Number of Monsters Now: ";
+    s+=QString::number(gamecontroller->getMonsterNumber());
+    ui->lineEdit->setText(s);
+    //ui->lineEdit->setText("Your Blood Now: 100/100");
+    s="Round: ";
     s+=QString::number(gamecontroller->getRound());
     ui->lineEdit_2->setText(s);
-    //场景
+    connect(gamecontroller,&GameController::MonsterNumberChange, this,&MainWindow::updateText);
+    //connect(gamecontroller,&GameController::RoundNumberChange, this,&MainWindow::updateText);
     scene->setSceneRect(0, 0, 900, 550);//设置坐标系，此时坐标（0，0）在窗口左上角
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setStyleSheet("background: transparent");
@@ -229,6 +233,25 @@ void MainWindow::gameHelp()
 {
     QMessageBox::about(this, tr("Game Help"), tr("Learn it by yourself hahaha ~"
         "<p>Space - pause & resume"));
+}
+
+void MainWindow::updateText()
+{
+    ui->lineEdit->setStyleSheet("background:transparent;border-width:0;border-style:outset;color: rgb(128, 0, 2)");
+    ui->lineEdit_2->setStyleSheet("background:transparent;border-width:0;border-style:outset;color: rgb(128, 0, 2)");
+    QFont font;
+    font.setFamily("Trattatello");
+    font.setPixelSize(20);
+    font.setBold(true);
+    ui->lineEdit->setFont(font);
+    ui->lineEdit_2->setFont(font);
+    QString s="Number of Monsters Now: ";
+    s+=QString::number(gamecontroller->getMonsterNumber());
+    ui->lineEdit->setText(s);
+    //ui->lineEdit->setText("Your Blood Now: 100/100");
+    s="Round: ";
+    s+=QString::number(gamecontroller->getRound());
+    ui->lineEdit_2->setText(s);
 }
 
 

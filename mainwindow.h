@@ -48,6 +48,7 @@ private slots:
     void newGame();
     void gameHelp();
     void about();
+    void updateText();
 
 };
 

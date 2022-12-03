@@ -20,8 +20,11 @@ protected:
     void dropEvent(QGraphicsSceneDragDropEvent *) Q_DECL_OVERRIDE;
 
 
+
 private:
     GameController* gamecontroller;
+
+
 };
 
 #endif // CUSTOMSCENE_H

@@ -38,6 +38,7 @@ public:
     virtual void setPic();//虚函数,子类中需要重写以确定自己的图片
     virtual ~Monster();
 
+    bool isAlive(){return tmpBlood>0;}
 
 
 protected:

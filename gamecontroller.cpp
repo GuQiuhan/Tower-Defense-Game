@@ -56,6 +56,7 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
     scene.addItem(m);
     monsters.push_back(m);
+    MonsterNumberChange();
     //打开怪物生成计时器
     connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
 
@@ -150,16 +151,25 @@ void GameController::handleKeyPressed(QKeyEvent *event)//处理键盘事件
 void GameController::gameOver() //游戏结束，计时器停止
 {
     disconnect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));
+    disconnect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
     if (QMessageBox::Yes == QMessageBox::information(NULL,
                             tr("Game Over"), tr("Again?"),
                             QMessageBox::Yes | QMessageBox::No,
                             QMessageBox::Yes)) {
-        connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));//重新开始游戏
         scene.clear();
+        monsters.clear();
         Round++;
-        srand((unsigned)time(NULL));
-        Monster* m=new Monster(MonsterPaths[rand()%2],*this);
+        connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));//重新开始游戏
+
+        //开局先产生一个怪物
+        int a=rand();
+        Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
         scene.addItem(m);
+        monsters.push_back(m);
+        MonsterNumberChange();
+        //打开怪物生成计时器
+        connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
+
     } else {
         exit(0);
     }
@@ -237,6 +247,8 @@ void GameController::addMonster()
         scene.addItem(m);
         monsters.push_back(m);
     }
+
+    MonsterNumberChange();//发出信号
 }
 
 
@@ -283,4 +295,20 @@ void GameController::addTower(QString type,QPointF pos)
 int GameController::getRound()
 {
     return Round;
+}
+
+//void GameController::MonsterNumberChange(int i)
+//{
+//    MonsterNumber+=i;
+//}
+
+int GameController::getMonsterNumber()
+{
+    int sum=0;
+    for(int i=0; i<monsters.size();++i)
+    {
+        if(monsters[i]->isAlive()) sum+=1;
+    }
+    return sum;
+
 }
