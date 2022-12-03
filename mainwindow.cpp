@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setAcceptDrops(true);		//设置：接受拖放
     ui->listWidget->setAcceptDrops(false);//list控件不支持drag，所以松开鼠标时icon不会移位
-
+    ui->graphicsView->setScene(scene);//这一句为加不加都一样？
 }
 
 void MainWindow::InitBackground()

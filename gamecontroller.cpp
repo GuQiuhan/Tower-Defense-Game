@@ -63,12 +63,14 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     Round=0;
     //用于测试
     MoonTower* t=new MoonTower(150,400);
+    towers.push_back(t);
     //MoonTower* t=new MoonTower(330,100);
-    qDebug()<<t->x()<<","<<t->y();
+    //qDebug()<<t->x()<<","<<t->y();
     //t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
     scene.addItem(t);
-    bullet* b=new bullet(QPointF(100,100),QPointF(200,200));
-    //scene.addItem(b);
+    bullet* b=new bullet(QPointF(0,100),QPointF(900,200),*this);
+    scene.addItem(b);
+    bullets.push_back(b);
 
 
 
@@ -156,8 +158,26 @@ void GameController::gameOver() //游戏结束，计时器停止
                             tr("Game Over"), tr("Again?"),
                             QMessageBox::Yes | QMessageBox::No,
                             QMessageBox::Yes)) {
-        scene.clear();
+
+        for( vector<bullet*>::iterator it = bullets.begin(); it != bullets.end(); it++ )
+        {
+            delete *it;//释放内存
+            *it=NULL;
+        }
+        for( vector<Monster*>::iterator it = monsters.begin(); it != monsters.end(); it++ )
+        {
+            delete *it;//释放内存
+            *it=NULL;
+        }
+        for( vector<MoonTower*>::iterator it = towers.begin(); it != towers.end(); it++ )
+        {
+            delete *it;//释放内存
+            *it=NULL;
+        }
         monsters.clear();
+        bullets.clear();
+        towers.clear();
+        scene.clear();
         Round++;
         connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));//重新开始游戏
 
@@ -310,5 +330,22 @@ int GameController::getMonsterNumber()
         if(monsters[i]->isAlive()) sum+=1;
     }
     return sum;
+
+}
+
+void GameController::deleteBullet(bullet* b)
+{
+    scene.removeItem(b);//删除图元
+    for( vector<bullet*>::iterator it = bullets.begin(); it != bullets.end(); it++ )
+    {
+        if( *it == b )
+        {
+           delete *it;//释放内存
+            *it=NULL;
+           it= bullets.erase(it);
+           break;
+        }
+    }
+
 
 }
