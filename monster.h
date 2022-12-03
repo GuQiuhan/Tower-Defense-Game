@@ -25,7 +25,7 @@ private:
     QMovie * movie;//构造gif图片所需
     bool pause;//遇到近战塔需要停止,只有在false时才可以移动
     bool move();//到达终点则返回true
-    GameController &controller;
+
     void advance(int s);//必须重载！用于计时器刷新时调用
     void setPause(){pause=true;}
     void setResume(){pause=false;}
@@ -43,13 +43,13 @@ public:
     virtual ~Monster();
 
     bool isAlive(){return tmpBlood>0;}
-
+    void minusBlood();
 
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
     void handleCollisions();
-
+    GameController &controller;
 
 };
 
@@ -77,7 +77,7 @@ public:
     ~MonsterFrog(){delete movie;}
 
     void setPic(){Pic=":/gif/frog.gif";}
-
+    void minusBlood();
 
 protected:
     QRectF boundingRect() const; //override
@@ -110,7 +110,7 @@ public:
 
     void setPic(){Pic=":/gif/ghost.gif";}
 
-
+    void minusBlood();
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
@@ -148,7 +148,7 @@ public:
         //cout << a<<endl;
         Pic=":/gif/Dino"+std::to_string(a)+".gif";//随机产生一个小恐龙
     }
-
+    void minusBlood();
 
 protected:
     QRectF boundingRect() const; //override
@@ -184,7 +184,7 @@ public:
         Pic=":/gif/skeleton.gif";//随机产生一个小恐龙
     }
 
-
+    void minusBlood();
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override

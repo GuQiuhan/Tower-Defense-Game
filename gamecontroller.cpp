@@ -58,7 +58,7 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     monsters.push_back(m);
     MonsterNumberChange();
     //打开怪物生成计时器
-    //connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
+    connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
 
     Round=0;
     //用于测试
@@ -390,14 +390,11 @@ void GameController::Shoot(Monster* m,QGraphicsItem* t)
     bullet* b=new bullet(m->pos(),t->pos(),*this);//发射一号子弹
     scene.addItem(b);
     bullets.push_back(b);
-    cout <<"bullet1"<<endl;
 }
 
 void GameController::Shoot(QGraphicsItem* t,Monster* m)
 {
-    bulletTwo* b=new bulletTwo(m->pos(),t->pos(),*this);//发射2号子弹
+    bulletTwo* b=new bulletTwo(t->pos(),m->pos(),*this);//发射2号子弹
     scene.addItem(b);
     bullets.push_back(b);
-    cout <<"bullet2"<<endl;
-
 }

@@ -60,7 +60,8 @@ bool bullet::move()//scene是910*560
     if(tmp.x()<0||tmp.x()>910||tmp.y()<0||tmp.y()>560)
     {   //cout <<"here"<<endl;
         return true;
-}
+    }
+
     if(dest.x()==src.x())//竖线
     {
         if(src.y()<dest.y()) //向下
@@ -142,12 +143,14 @@ bool bullet::move()//scene是910*560
 
 void bullet::handleCollisions()//1号子弹，怪兽打塔，所以遇到塔自己消失
 {
-    QList<QGraphicsItem *> collisions = collidingItems();
+    QList<QGraphicsItem *> collisions = collidingItems(Qt::ContainsItemBoundingRect);
     foreach (QGraphicsItem *collidingItem, collisions)
     {
         if(collidingItem->data(GD_Type) == GO_GunTower)
         {
-           controller.deleteBullet(this);
+           //if(pow(tmp.x()-collidingItem->x(),2)+pow(tmp.y()-collidingItem->y(),2)<100)
+               controller.deleteBullet(this);
+               //(MoonTower*)(collidingItem)->minusBlood();
         }
     }
 }
@@ -158,7 +161,7 @@ void bulletTwo::paint(QPainter * painter, const QStyleOptionGraphicsItem * optio
 
         //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
         painter->drawImage(boundingRect(), movie->currentImage());
-        painter->drawRect(boundingRect());
+        //painter->drawRect(boundingRect());
     }
 }
 
@@ -183,6 +186,8 @@ void bulletTwo::handleCollisions()//2号子弹，塔打怪兽，所以遇到怪�
         if(collidingItem->data(GD_Type) == GO_Monster)
         {
            controller.deleteBullet(this);
+           ((Monster*)(collidingItem))->minusBlood();
+
         }
     }
 
