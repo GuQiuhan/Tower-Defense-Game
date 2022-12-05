@@ -23,7 +23,7 @@ class bullet:public QGraphicsItem
 private:
     QPointF src;
     QPointF dest;
-    QPointF tmp;
+
     QMovie* movie;
 
 
@@ -38,6 +38,7 @@ protected:
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
 
     GameController &controller;
+    QPointF tmp;
 
 };
 

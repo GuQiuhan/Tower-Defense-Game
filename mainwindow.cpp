@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();//增加菜单栏
     createMenus();
 
-    test();//！测试路线，发行时删除！
+    //test();//！测试路线，发行时删除！
 
 
     setAcceptDrops(true);		//设置：接受拖放

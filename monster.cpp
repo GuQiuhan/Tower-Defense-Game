@@ -199,7 +199,10 @@ void Monster::advance(int step)//step参数为重载时系统给的
     if(!step) return;
 
     //更新monster
-    move();//monster移动
+    if(move()){
+        controller.deleteMonster(this);
+        return;
+    }//monster移动
     handleCollisions();
 
 }
@@ -216,11 +219,21 @@ void Monster::handleCollisions()
         {
             setPause();
             flag=false;
+            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            if(tmp-time1>1000)
+            {
+                //cout<< "s"<<endl;
+                controller.Shoot(this,collidingItem);
+                time1=tmp;
+            }
+            else if(tmp-time2>1500)
+            {
+                controller.Shoot(this,collidingItem);
+                time2=tmp;
+            }
         }
         if(collidingItem->data(GD_Type) == GO_GunTower)
         {
-            //cout<<"here"<<endl;
-            //使用时间判断，防止一直在打子弹
             long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             if(tmp-time1>1000)
             {
@@ -246,9 +259,16 @@ void Monster::handleCollisions()
         }
         if(collidingItem->data(GD_Type) == GO_Bullet2)//2号子弹，表示被击中
         {
-            tmpBlood-=2;
-            //cout<< tmpBlood<<endl;
-            if(tmpBlood<=0){ controller.deleteMonster(this); }
+            if(pow(collidingItem->pos().x()-tmp.x(),2)+pow(collidingItem->pos().y()-tmp.y(),2)<1600)
+            {
+                tmpBlood-=2;
+                //cout<< tmpBlood<<endl;
+                if(tmpBlood<=0)
+                {
+                    controller.deleteMonster(this);
+                    return;
+                }
+            }
         }
     }
 
@@ -256,41 +276,6 @@ void Monster::handleCollisions()
 
 }
 
-void Monster::minusBlood()
-{
-    tmpBlood-=2;
-    //cout<< tmpBlood<<endl;
-    if(tmpBlood<=0){ controller.deleteMonster(this); }
-
-}
-void MonsterFrog::minusBlood()
-{
-    tmpBlood-=2;
-    //cout<< tmpBlood<<endl;
-    if(tmpBlood<=0){ controller.deleteMonster(this); }
-
-}
-void MonsterGhost::minusBlood()
-{
-    tmpBlood-=2;
-    //cout<< tmpBlood<<endl;
-    if(tmpBlood<=0){ controller.deleteMonster(this); }
-
-}
-void MonsterDino::minusBlood()
-{
-    tmpBlood-=2;
-    //cout<< tmpBlood<<endl;
-    if(tmpBlood<=0){ controller.deleteMonster(this); }
-
-}
-void MonsterBoss::minusBlood()
-{
-    tmpBlood-=2;
-    //cout<< tmpBlood<<endl;
-    if(tmpBlood<=0){ controller.deleteMonster(this); }
-
-}
 
 void MonsterFrog::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
 {
@@ -300,6 +285,8 @@ void MonsterFrog::paint(QPainter * painter, const QStyleOptionGraphicsItem * opt
         //painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
         painter->drawRect(-MONSTER_SIZE,-MONSTER_SIZE-8,MONSTER_SIZE*2,6);//绘制矩形
         painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
+        //tmpBlood=Monster::tmpBlood;
+        //sumBlood=Monster::sumBlood;
         qreal rate = tmpBlood/sumBlood;//计算比例
         painter->drawRect(-MONSTER_SIZE,-MONSTER_SIZE-8,rate*MONSTER_SIZE*2,6);//绘制矩形
     }
@@ -314,7 +301,6 @@ QRectF MonsterFrog::boundingRect() const
     return QRectF(-MONSTER_SIZE, -MONSTER_SIZE, MONSTER_SIZE*2, MONSTER_SIZE*2);//参数合适，有待调节
 
 }
-
 
 void MonsterGhost::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) //override
 {
@@ -370,7 +356,7 @@ void MonsterBoss::paint(QPainter * painter, const QStyleOptionGraphicsItem * opt
     {
         painter->drawImage(boundingRect(), movie->currentImage());//在bounding Rect内画图，若boundingRect大了，图形也就大了
         //painter->drawRect(boundingRect());//可以画出相应的item的Rect大小
-        painter->drawRect(-MONSTER_SIZE,-MONSTER_SIZE-8,MONSTER_SIZE*2,6);//绘制矩形
+        painter->drawRect(-MONSTER_SIZE-10,-MONSTER_SIZE-50-8,MONSTER_SIZE*3,6);//绘制矩形
         painter->setBrush(QBrush(Qt::red, Qt::SolidPattern));
         qreal rate = tmpBlood/sumBlood;//计算比例
         painter->drawRect(-MONSTER_SIZE-10,-MONSTER_SIZE-50-8,rate*MONSTER_SIZE*3,6);//绘制矩形

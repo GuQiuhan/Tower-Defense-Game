@@ -53,9 +53,9 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     //开局先产生一个怪物
     srand((unsigned)time(NULL));
     int a=rand();
-    Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
-    scene.addItem(m);
-    monsters.push_back(m);
+    //MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+    //scene.addItem(m);
+    //monsters.push_back(m);
     MonsterNumberChange();
     //打开怪物生成计时器
     connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
@@ -68,9 +68,9 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     //qDebug()<<t->x()<<","<<t->y();
     //t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
     scene.addItem(t);
-    bullet* b=new bullet(QPointF(0,100),QPointF(900,200),*this);
-    scene.addItem(b);
-    bullets.push_back(b);
+//    bullet* b=new bullet(QPointF(0,100),QPointF(900,200),*this);
+//    scene.addItem(b);
+//    bullets.push_back(b);
 
 
 

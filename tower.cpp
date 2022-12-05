@@ -16,8 +16,8 @@ MoonTower::MoonTower(qreal x, qreal y,GameController& c)
     time1=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//获取系统时间，单位为毫秒
     time2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
-    sumBlood=10;
-    tmpBlood=10;
+    sumBlood=100;
+    tmpBlood=100;
 }
 
 QRectF MoonTower::boundingRect() const
@@ -38,13 +38,6 @@ void MoonTower::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
     }
 }
 
-//QPainterPath MoonTower::shape() const //实际的形状,碰撞检测使用的函数
-//{
-//    QPainterPath p;
-//   // p.addEllipse(tmp, TOWER_SIZE, TOWER_SIZE);
-//    return p;
-//}
-
 
 void MoonTower::advance(int phase)
 {
@@ -55,14 +48,17 @@ void MoonTower::advance(int phase)
 
 void MoonTower::handleCollisions()
 {
-    QList<QGraphicsItem *> collisions = collidingItems(Qt::ContainsItemBoundingRect);
+    QList<QGraphicsItem *> collisions = collidingItems();
     foreach (QGraphicsItem *collidingItem, collisions)
-    {
+    {      
         if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
         {
            tmpBlood-=2;
            if(tmpBlood<=0)
+           {
                controller.deleteTower(this);
+               return;
+           }
 
         }
     }
@@ -87,47 +83,50 @@ QPainterPath GunTowerOne::shape() const
     return p;
 }
 
-void GunTowerOne::handleCollisions()
-{
-    QList<QGraphicsItem *> collisions = collidingItems();
-    foreach (QGraphicsItem *collidingItem, collisions)
-    {
-        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹,由怪兽控制
-        {
-//            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-//            //cout<<tmp-time1<<","<<tmp-time2<<endl;
-//            if(tmp-time1>1000)
+//void GunTowerOne::handleCollisions()
+//{
+//    QList<QGraphicsItem *> collisions = collidingItems();
+//    foreach (QGraphicsItem *collidingItem, collisions)
+//    {
+//        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹,由怪兽控制
+//        {
+////            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+////            //cout<<tmp-time1<<","<<tmp-time2<<endl;
+////            if(tmp-time1>1000)
+////            {
+////                controller.Shoot(this,collidingItem);
+////                time1=tmp;
+////               // cout<< "here"<<endl;
+////            }
+////            else if(tmp-time2>1000)
+////            {
+////                controller.Shoot(this,collidingItem);
+////                time2=tmp;
+////            }
+
+//        }
+//        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
+//        {
+//            //血量减少
+//            tmpBlood-=2;
+//            if(tmpBlood<=0)
 //            {
-//                controller.Shoot(this,collidingItem);
-//                time1=tmp;
-//               // cout<< "here"<<endl;
-//            }
-//            else if(tmp-time2>1000)
-//            {
-//                controller.Shoot(this,collidingItem);
-//                time2=tmp;
+//                controller.deleteTower(this);
+//                return;
 //            }
 
-        }
-        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
-        {
-            //血量减少
-            tmpBlood-=2;
-            if(tmpBlood<=0)
-                controller.deleteTower(this);
-            //controller.deleteBullet((bullet*)collidingItem);
-        }
-    }
+//        }
+//    }
 
-}
+//}
 
 
-void GunTowerOne::advance(int phase)
-{
-    if(!phase) return; //第0阶段
-    handleCollisions();
-    //move();
-}
+//void GunTowerOne::advance(int phase)
+//{
+//    if(!phase) return; //第0阶段
+//    handleCollisions();
+//    //move();
+//}
 void GunTowerTwo::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
      painter->drawImage(boundingRect(), QImage(path));
@@ -141,45 +140,48 @@ QPainterPath GunTowerTwo::shape() const
     return p;
 }
 
-void GunTowerTwo::handleCollisions()
-{
-    QList<QGraphicsItem *> collisions = collidingItems();
-    foreach (QGraphicsItem *collidingItem, collisions)
-    {
-        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹
-        {
-//            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-//            //cout<<tmp-time1<<","<<tmp-time2<<endl;
-//            if(tmp-time1>1000)
+//void GunTowerTwo::handleCollisions()
+//{
+//    QList<QGraphicsItem *> collisions = collidingItems();
+//    foreach (QGraphicsItem *collidingItem, collisions)
+//    {
+//        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹
+//        {
+////            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+////            //cout<<tmp-time1<<","<<tmp-time2<<endl;
+////            if(tmp-time1>1000)
+////            {
+////                controller.Shoot(this,collidingItem);
+////                time1=tmp;
+////               // cout<< "here"<<endl;
+////            }
+////            else if(tmp-time2>1000)
+////            {
+////                controller.Shoot(this,collidingItem);
+////                time2=tmp;
+////            }
+
+//        }
+//        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
+//        {
+//            tmpBlood-=2;
+//            if(tmpBlood<=0)
 //            {
-//                controller.Shoot(this,collidingItem);
-//                time1=tmp;
-//               // cout<< "here"<<endl;
+//                controller.deleteTower(this);
+//                return;
 //            }
-//            else if(tmp-time2>1000)
-//            {
-//                controller.Shoot(this,collidingItem);
-//                time2=tmp;
-//            }
+//        }
+//    }
 
-        }
-        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
-        {
-            tmpBlood-=2;
-            if(tmpBlood<=0)
-                controller.deleteTower(this);
-        }
-    }
-
-}
+//}
 
 
-void GunTowerTwo::advance(int phase)
-{
-    if(!phase) return; //第0阶段
-    handleCollisions();
-    //move();
-}
+//void GunTowerTwo::advance(int phase)
+//{
+//    if(!phase) return; //第0阶段
+//    handleCollisions();
+//    //move();
+//}
 void GunTowerThree::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
      painter->drawImage(boundingRect(), QImage(path));
@@ -193,45 +195,48 @@ QPainterPath GunTowerThree::shape() const
     return p;
 }
 
-void GunTowerThree::handleCollisions()
-{
-    QList<QGraphicsItem *> collisions = collidingItems();
-    foreach (QGraphicsItem *collidingItem, collisions)
-    {
-        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹
-        {
-//            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-//           // cout<<tmp-time1<<","<<tmp-time2<<endl;
-//            if(tmp-time1>1000)
+//void GunTowerThree::handleCollisions()
+//{
+//    QList<QGraphicsItem *> collisions = collidingItems();
+//    foreach (QGraphicsItem *collidingItem, collisions)
+//    {
+//        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹
+//        {
+////            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+////           // cout<<tmp-time1<<","<<tmp-time2<<endl;
+////            if(tmp-time1>1000)
+////            {
+////                controller.Shoot(this,collidingItem);
+////                time1=tmp;
+////               // cout<< "here"<<endl;
+////            }
+////            else if(tmp-time2>1000)
+////            {
+////                controller.Shoot(this,collidingItem);
+////                time2=tmp;
+////            }
+
+//        }
+//        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
+//        {
+//            tmpBlood-=2;
+//            if(tmpBlood<=0)
 //            {
-//                controller.Shoot(this,collidingItem);
-//                time1=tmp;
-//               // cout<< "here"<<endl;
+//                controller.deleteTower(this);
+//                return;
 //            }
-//            else if(tmp-time2>1000)
-//            {
-//                controller.Shoot(this,collidingItem);
-//                time2=tmp;
-//            }
+//        }
+//    }
 
-        }
-        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
-        {
-            tmpBlood-=2;
-            if(tmpBlood<=0)
-                controller.deleteTower(this);
-        }
-    }
-
-}
+//}
 
 
-void GunTowerThree::advance(int phase)
-{
-    if(!phase) return; //第0阶段
-    handleCollisions();
-    //move();
-}
+//void GunTowerThree::advance(int phase)
+//{
+//    if(!phase) return; //第0阶段
+//    handleCollisions();
+//    //move();
+//}
 void GunTowerFour::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
      painter->drawImage(boundingRect(), QImage(path));
@@ -245,43 +250,46 @@ QPainterPath GunTowerFour::shape() const
     return p;
 }
 
-void GunTowerFour::handleCollisions()
-{
-    QList<QGraphicsItem *> collisions = collidingItems();
-    foreach (QGraphicsItem *collidingItem, collisions)
-    {
-        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹
-        {/*
-            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-           // cout<<tmp-time1<<","<<tmp-time2<<endl;
-            if(tmp-time1>1000)
-            {
-                controller.Shoot(this,collidingItem);
-                time1=tmp;
-               // cout<< "here"<<endl;
-            }
-            else if(tmp-time2>1000)
-            {
-                controller.Shoot(this,collidingItem);
-                time2=tmp;
-            }*/
+//void GunTowerFour::handleCollisions()
+//{
+//    QList<QGraphicsItem *> collisions = collidingItems();
+//    foreach (QGraphicsItem *collidingItem, collisions)
+//    {
+//        if (collidingItem->data(GD_Type) == GO_Monster) //撞到了怪兽，发射2号子弹
+//        {/*
+//            long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+//           // cout<<tmp-time1<<","<<tmp-time2<<endl;
+//            if(tmp-time1>1000)
+//            {
+//                controller.Shoot(this,collidingItem);
+//                time1=tmp;
+//               // cout<< "here"<<endl;
+//            }
+//            else if(tmp-time2>1000)
+//            {
+//                controller.Shoot(this,collidingItem);
+//                time2=tmp;
+//            }*/
 
-        }
-        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
-        {
-            tmpBlood-=2;
-            if(tmpBlood<=0)
-                controller.deleteTower(this);
+//        }
+//        if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
+//        {
+//            tmpBlood-=2;
+//            if(tmpBlood<=0)
+//            {
+//                controller.deleteTower(this);
+//                return;
+//            }
 
-        }
-    }
+//        }
+//    }
 
-}
+//}
 
 
-void GunTowerFour::advance(int phase)
-{
-    if(!phase) return; //第0阶段
-    handleCollisions();
-    //move();
-}
+//void GunTowerFour::advance(int phase)
+//{
+//    if(!phase) return; //第0阶段
+//    handleCollisions();
+//    //move();
+//}

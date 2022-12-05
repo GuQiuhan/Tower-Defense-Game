@@ -18,7 +18,7 @@ bullet::bullet(QPointF s, QPointF d,GameController& g)
     tmp=src;
     setPos(s.x(),s.y());
     setData(GD_Type, GO_Bullet);
-
+    //qDebug()<<dest;
 }
 
 
@@ -35,7 +35,8 @@ void bullet::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, 
 
         //QRectF bound = boundingRect().adjusted(-20, -20, 30, 30);
         painter->drawImage(boundingRect(), movie->currentImage());
-        painter->drawRect(boundingRect());
+       // painter->drawRect(boundingRect());
+
     }
 }
 
@@ -47,7 +48,9 @@ void bullet::advance(int step)//step参数为重载时系统给的
     //更新monster
     if(move())//monster移动
     {
+        //cout<< "here"<<endl;
         controller.deleteBullet(this);
+        return;
     }
     handleCollisions();
 
@@ -57,8 +60,14 @@ void bullet::advance(int step)//step参数为重载时系统给的
 //注意子弹运动的路线是直线，超过屏幕后应当及时delete
 bool bullet::move()//scene是910*560
 {
-    if(tmp.x()<0||tmp.x()>910||tmp.y()<0||tmp.y()>560)
-    {   //cout <<"here"<<endl;
+    //qDebug()<<tmp;
+    if(tmp.x()<0||tmp.x()>910||tmp.y()<0||tmp.y()>560)//超出画框
+    {
+        return true;
+    }
+
+    if(tmp.x()==dest.x()&&tmp.y()==dest.y())//超出画框
+    {
         return true;
     }
 
@@ -146,11 +155,10 @@ void bullet::handleCollisions()//1号子弹，怪兽打塔，所以遇到塔自�
     QList<QGraphicsItem *> collisions = collidingItems(Qt::ContainsItemBoundingRect);
     foreach (QGraphicsItem *collidingItem, collisions)
     {
-        if(collidingItem->data(GD_Type) == GO_GunTower)
+        if(collidingItem->data(GD_Type) == GO_GunTower&&tmp==collidingItem->pos()&&pow(collidingItem->pos().x()-tmp.x(),2)+pow(collidingItem->pos().y()-tmp.y(),2)<8100)
         {
-           //if(pow(tmp.x()-collidingItem->x(),2)+pow(tmp.y()-collidingItem->y(),2)<100)
                controller.deleteBullet(this);
-               //(MoonTower*)(collidingItem)->minusBlood();
+               return;
         }
     }
 }
@@ -173,6 +181,7 @@ void bulletTwo::advance(int step)//step参数为重载时系统给的
     if(move())//monster移动
     {
         controller.deleteBullet(this);
+        return;
     }
 
     handleCollisions();
@@ -183,10 +192,11 @@ void bulletTwo::handleCollisions()//2号子弹，塔打怪兽，所以遇到怪�
     QList<QGraphicsItem *> collisions = collidingItems();
     foreach (QGraphicsItem *collidingItem, collisions)
     {
-        if(collidingItem->data(GD_Type) == GO_Monster)
+        if(collidingItem->data(GD_Type) == GO_Monster&&pow(collidingItem->pos().x()-tmp.x(),2)+pow(collidingItem->pos().y()-tmp.y(),2)<900)
         {
-           controller.deleteBullet(this);
-           ((Monster*)(collidingItem))->minusBlood();
+            controller.deleteBullet(this);
+            return;
+           //((Monster*)(collidingItem))->minusBlood();
 
         }
     }

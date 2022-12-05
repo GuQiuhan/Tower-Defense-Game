@@ -24,17 +24,11 @@ private:
     string Pic;//所用的gif路径,派生类中要使用
     QMovie * movie;//构造gif图片所需
     bool pause;//遇到近战塔需要停止,只有在false时才可以移动
-    bool move();//到达终点则返回true
 
     void advance(int s);//必须重载！用于计时器刷新时调用
-    void setPause(){pause=true;}
-    void setResume(){pause=false;}
-    qreal sumBlood;//总血量
-    qreal tmpBlood;//当前血量
-    long long time1;//两个计时器，一起用于发射子弹的时间间隔控制
-    long long time2;
-    long long time3;//两个计时器，一起用于塔发射子弹的时间间隔控制
-    long long time4;
+
+
+
 public:
     Monster(vector<QPointF> p,GameController & controller);//创建时需要给出路径
     Monster(Monster& m);//拷贝构造函数
@@ -43,13 +37,22 @@ public:
     virtual ~Monster();
 
     bool isAlive(){return tmpBlood>0;}
-    void minusBlood();
+   // void minusBlood();
 
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
     void handleCollisions();
     GameController &controller;
+    bool move();//到达终点则返回true
+    void setPause(){pause=true;}
+    void setResume(){pause=false;}
+    long long time1;//两个计时器，一起用于发射子弹的时间间隔控制
+    long long time2;
+    long long time3;//两个计时器，一起用于塔发射子弹的时间间隔控制
+    long long time4;
+    qreal sumBlood;//总血量
+    qreal tmpBlood;//当前血量
 
 };
 
@@ -59,8 +62,8 @@ class MonsterFrog:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
-    qreal sumBlood;//总血量
-    qreal tmpBlood;//当前血量
+    //qreal sumBlood;//总血量
+    //qreal tmpBlood;//当前血量
 public:
 
     MonsterFrog(vector<QPointF> p,GameController & controller)
@@ -69,15 +72,14 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
-        sumBlood=10;
-        tmpBlood=10;
+       // sumBlood=10;
+       // tmpBlood=10;
 
     }
 
     ~MonsterFrog(){delete movie;}
 
     void setPic(){Pic=":/gif/frog.gif";}
-    void minusBlood();
 
 protected:
     QRectF boundingRect() const; //override
@@ -91,8 +93,8 @@ class MonsterGhost:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
-    qreal sumBlood;//总血量
-    qreal tmpBlood;//当前血量
+    //qreal sumBlood;//总血量
+    //qreal tmpBlood;//当前血量
 public:
 
     MonsterGhost(vector<QPointF> p,GameController & controller)
@@ -101,16 +103,14 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
-        sumBlood=10;
-        tmpBlood=10;
+        //sumBlood=10;
+        //tmpBlood=10;
 
     }
 
     ~MonsterGhost(){delete movie;}
 
     void setPic(){Pic=":/gif/ghost.gif";}
-
-    void minusBlood();
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
@@ -123,8 +123,8 @@ class MonsterDino:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
-    qreal sumBlood;//总血量
-    qreal tmpBlood;//当前血量
+    //qreal sumBlood;//总血量
+    //qreal tmpBlood;//当前血量
 public:
 
     MonsterDino(vector<QPointF> p,GameController & controller)
@@ -133,8 +133,8 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
-        sumBlood=10;
-        tmpBlood=10;
+       // sumBlood=10;
+        //tmpBlood=10;
 
     }
 
@@ -148,7 +148,6 @@ public:
         //cout << a<<endl;
         Pic=":/gif/Dino"+std::to_string(a)+".gif";//随机产生一个小恐龙
     }
-    void minusBlood();
 
 protected:
     QRectF boundingRect() const; //override
@@ -161,8 +160,8 @@ class MonsterBoss:public Monster
 private:
     string Pic;
     QMovie * movie;//构造gif图片所需
-    qreal sumBlood;//总血量
-    qreal tmpBlood;//当前血量
+    //qreal sumBlood;//总血量
+    //qreal tmpBlood;//当前血量
 
 public:
 
@@ -172,8 +171,8 @@ public:
         setPic();
         movie = new QMovie(QString::fromStdString(Pic));
         movie->start();
-        sumBlood=20;
-        tmpBlood=20;
+        //sumBlood=20;
+        //tmpBlood=20;
 
     }
 
@@ -183,8 +182,6 @@ public:
     {
         Pic=":/gif/skeleton.gif";//随机产生一个小恐龙
     }
-
-    void minusBlood();
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override

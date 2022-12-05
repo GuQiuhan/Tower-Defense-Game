@@ -53,25 +53,24 @@ class GunTowerOne:public MoonTower
     QString path;
     long long time1;
     long long time2;
-    int  sumBlood;
-    int tmpBlood;
+
 public:
     GunTowerOne(qreal x, qreal y,GameController& c)
         :MoonTower(x,y,c)
     {
         path=":/image/tower4_v1.jpg";
         setData(GD_Type, GO_GunTower);
+        setPos(x, y);
         time1=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//获取系统时间，单位为毫秒
         time2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        sumBlood=10;
-        tmpBlood=10;
+
     }
 protected:
     QRectF boundingRect() const ;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) ;
     QPainterPath shape() const override;
-    void handleCollisions();
-    void advance(int phase) override;
+   // void handleCollisions();
+    //void advance(int phase) override;
 };
 
 
@@ -80,24 +79,23 @@ class GunTowerTwo:public GunTowerOne
     QString path;
     long long time1;
     long long time2;
-    int  sumBlood;
-    int tmpBlood;
+
 public:
     GunTowerTwo(qreal x, qreal y,GameController& c)
         :GunTowerOne(x,y,c)
     {
         path=":/image/tower5_v1.jpg";
         setData(GD_Type, GO_GunTower);
+        setPos(x, y);
         time1=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//获取系统时间，单位为毫秒
         time2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        sumBlood=10;
-        tmpBlood=10;
+
     }
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) ;
     QPainterPath shape() const override;
-    void handleCollisions();
-    void advance(int phase) override;
+   // void handleCollisions();
+    //void advance(int phase) override;
 };
 
 class GunTowerThree:public GunTowerOne
@@ -105,25 +103,24 @@ class GunTowerThree:public GunTowerOne
     QString path;
     long long time1;
     long long time2;
-    int  sumBlood;
-    int tmpBlood;
+
 public:
     GunTowerThree(qreal x, qreal y,GameController& c)
         :GunTowerOne(x,y,c)
     {
         path=":/image/tower4_v2.jpg";
         setData(GD_Type, GO_GunTower);
+        setPos(x, y);
         time1=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//获取系统时间，单位为毫秒
         time2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        sumBlood=10;
-        tmpBlood=10;
+
     }
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) ;
     QPainterPath shape() const override;
-    void handleCollisions();
-    void advance(int phase) override;
+    //void handleCollisions();
+    //void advance(int phase) override;
 };
 
 class GunTowerFour:public GunTowerOne
@@ -131,8 +128,6 @@ class GunTowerFour:public GunTowerOne
     QString path;
     long long time1;
     long long time2;
-    int  sumBlood;
-    int tmpBlood;
 
 public:
     GunTowerFour(qreal x, qreal y,GameController& c)
@@ -140,16 +135,16 @@ public:
     {
         path=":/image/tower5_v2.jpg";
         setData(GD_Type, GO_GunTower);
+        setPos(x, y);
         time1=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();//获取系统时间，单位为毫秒
         time2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        sumBlood=10;
-        tmpBlood=10;
+
     }
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) ;
     QPainterPath shape() const override;
-    void handleCollisions();
-    void advance(int phase) override;
+    //void handleCollisions();
+    //void advance(int phase) override;
 };
 #endif // TOWER_H
