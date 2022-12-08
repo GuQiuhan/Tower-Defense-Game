@@ -137,7 +137,7 @@ bool Monster::move()
                 if(tmp.x()<tmp_path[index+1].x()) //向右下
                 {
 
-                    tmp.setX(tmp.x()+0.4);
+                    tmp.setX(tmp.x()+0.6);
                     if(tmp.x()>tmp_path[index+1].x())
                         tmp.setX(tmp_path[index+1].x());
                     //根据直线斜率增加y
@@ -147,7 +147,7 @@ bool Monster::move()
                 }
                 else if(tmp.x()>tmp_path[index+1].x()) //向左上
                 {
-                    tmp.setX(tmp.x()-0.4);
+                    tmp.setX(tmp.x()-0.6);
                     if(tmp.x()<tmp_path[index+1].x())
                         tmp.setX(tmp_path[index+1].x());
                     //根据直线斜率增加y
@@ -163,7 +163,7 @@ bool Monster::move()
                 if(tmp.x()<tmp_path[index+1].x()) //向右上
                 {
 
-                    tmp.setX(tmp.x()+0.4);
+                    tmp.setX(tmp.x()+0.6);
                     if(tmp.x()>tmp_path[index+1].x())
                         tmp.setX(tmp_path[index+1].x());
                     //根据直线斜率增加y
@@ -174,7 +174,7 @@ bool Monster::move()
                 else if(tmp.x()>tmp_path[index+1].x()) //向左下
                 {
                     //cout << "here"<<endl;
-                    tmp.setX(tmp.x()-0.4);
+                    tmp.setX(tmp.x()-0.6);
                     if(tmp.x()<tmp_path[index+1].x())
                         tmp.setX(tmp_path[index+1].x());
                     //根据直线斜率增加y
@@ -231,9 +231,20 @@ void Monster::handleCollisions()
                 controller.Shoot(this,collidingItem);
                 time2=tmp;
             }
+            if(tmp-time3>1000)
+            {
+                controller.Shoot(collidingItem,this);//塔向怪兽发射子弹
+                time3=tmp;
+            }
+            else if(tmp-time4>1500)
+            {
+                controller.Shoot(collidingItem,this);
+                time4=tmp;
+            }
         }
         if(collidingItem->data(GD_Type) == GO_GunTower)
         {
+           // cout<<"here2"<<endl;
             long long tmp=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             if(tmp-time1>1000)
             {

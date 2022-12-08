@@ -17,8 +17,10 @@ enum GameObjectTypes {
     GO_Bullet,//怪兽打塔的子弹
     GO_Bullet2,//塔打怪兽的子弹
     GO_GunTower,
+    GO_Rect
 };
 #endif
+
 
 //第一个塔：月亮塔
 class MoonTower : public QGraphicsItem
@@ -27,7 +29,7 @@ public:
     MoonTower(qreal x, qreal y,GameController& c);//qreal默认为double
 
     //QPainterPath shape() const;
-
+    void addBonus(string s);//增加词缀，每个词缀6秒时间消失
 private:
     QMovie * movie;
     long long time1;
@@ -45,6 +47,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) ;
     void handleCollisions();
     GameController& controller;
+
     //QPainterPath shape() const override;
 };
 
@@ -53,6 +56,7 @@ class GunTowerOne:public MoonTower
     QString path;
     long long time1;
     long long time2;
+    QTimer bonusTimer;
 
 public:
     GunTowerOne(qreal x, qreal y,GameController& c)
@@ -65,6 +69,8 @@ public:
         time2=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     }
+    void addBonus(string s);//增加词缀，每个词缀6秒时间消失
+    void deleteBonus(string s);
 protected:
     QRectF boundingRect() const ;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) ;

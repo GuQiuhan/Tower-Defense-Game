@@ -8,6 +8,7 @@
 #include <QPainter>
 #include <iostream>
 #include <QMovie>
+#include <string>
 using namespace std;
 
 class GameController;
@@ -29,6 +30,7 @@ private:
 
 
 
+
 public:
     Monster(vector<QPointF> p,GameController & controller);//创建时需要给出路径
     Monster(Monster& m);//拷贝构造函数
@@ -36,9 +38,8 @@ public:
     virtual void setPic();//虚函数,子类中需要重写以确定自己的图片
     virtual ~Monster();
 
-    bool isAlive(){return tmpBlood>0;}
-   // void minusBlood();
 
+    bool isAlive(){return tmpBlood>0;}
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
@@ -111,6 +112,7 @@ public:
     ~MonsterGhost(){delete movie;}
 
     void setPic(){Pic=":/gif/ghost.gif";}
+
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override
@@ -182,6 +184,8 @@ public:
     {
         Pic=":/gif/skeleton.gif";//随机产生一个小恐龙
     }
+
+
 protected:
     QRectF boundingRect() const; //override
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget); //override

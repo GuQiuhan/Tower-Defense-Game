@@ -53,7 +53,7 @@ void MoonTower::handleCollisions()
     {      
         if(collidingItem->data(GD_Type) == GO_Bullet)//1号子弹，表示被击中
         {
-           tmpBlood-=2;
+           tmpBlood-=1;
            if(tmpBlood<=0)
            {
                controller.deleteTower(this);
@@ -64,6 +64,15 @@ void MoonTower::handleCollisions()
     }
 }
 
+void MoonTower::addBonus(string s)
+{
+    if(s=="Freeze")//使敌人不动，无需修改
+    {
+        setData(GD_Type, GO_Tower);//变成近战塔性质
+
+    }
+
+}
 
 QRectF GunTowerOne::boundingRect() const
 {
@@ -81,6 +90,16 @@ QPainterPath GunTowerOne::shape() const
     QPainterPath p;
     p.addEllipse(tmp, TOWER_SIZE, TOWER_SIZE);
     return p;
+}
+
+void GunTowerOne::addBonus(string s)//执行不到这里，只能执行父类的addBonus
+{
+
+    if(s=="Freeze")//使敌人不动，无需修改
+    {
+        setData(GD_Type, GO_Tower);//变成近战塔性质
+
+    }
 }
 
 //void GunTowerOne::handleCollisions()

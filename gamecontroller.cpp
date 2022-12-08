@@ -34,7 +34,16 @@ vector<vector<QPointF>> MonsterPaths={
         QPointF(650,340),
         QPointF(650,475),
         QPointF(910,475)
-    }
+    },
+    //飞行路径
+    {
+        QPointF(0,100),
+        QPointF(40,50),
+        QPointF(100,80),
+        QPointF(300,200),
+        QPointF(500,100),
+        QPointF(910,475)
+    },
 };
 
 
@@ -49,13 +58,13 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     timer.start( 1000/40 );//开启充当游戏循环的定时器，定时间隔是 1000 / 40 毫秒，也就是每秒40帧
     connect(&timer, SIGNAL(timeout()), &scene, SLOT(advance())); //这里的advanced()函数需要重写（？），计时器开始运行即不断调用各个类成员的advance()函数
 
-    Monstertimer.start(3000);//每5秒产生一个怪物
+    Monstertimer.start(4000);//每5秒产生一个怪物
     //开局先产生一个怪物
     srand((unsigned)time(NULL));
     int a=rand();
-    //MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
-    //scene.addItem(m);
-    //monsters.push_back(m);
+    MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+    scene.addItem(m);
+    monsters.push_back(m);
     MonsterNumberChange();
     //打开怪物生成计时器
     connect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
@@ -203,7 +212,7 @@ void GameController::addMonster()
     //cout<< a<<endl;
     if(n<2)
     {
-        Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        Monster* m=new Monster(MonsterPaths[2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
         scene.addItem(m);
         monsters.push_back(m);
     }
@@ -232,7 +241,7 @@ void GameController::addMonster()
         switch(x){
             case 0:
             {
-                Monster* m=new Monster(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                Monster* m=new Monster(MonsterPaths[2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
                 scene.addItem(m);
                 monsters.push_back(m);
                 break;
@@ -277,35 +286,35 @@ void GameController::addTower(QString type,QPointF pos)
     if(type=="MoonTower")
     {
         MoonTower* t=new MoonTower(pos.x(),pos.y(),*this);
-
+        towers.push_back(t);
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower1")
     {
         GunTowerOne* t=new GunTowerOne(pos.x(),pos.y(),*this);
-
+        towers.push_back(t);
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower2")
     {
         GunTowerTwo* t=new GunTowerTwo(pos.x(),pos.y(),*this);
-
+        towers.push_back(t);
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower3")
     {
         GunTowerThree* t=new GunTowerThree(pos.x(),pos.y(),*this);
-
+        towers.push_back(t);
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower4")
     {
         GunTowerFour* t=new GunTowerFour(pos.x(),pos.y(),*this);
-
+        towers.push_back(t);
         t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
@@ -352,6 +361,23 @@ void GameController::deleteBullet(bullet* b)
 
 void GameController::deleteMonster(Monster* m)
 {
+    //随机掉落词缀
+    vector<string> bonus={"Bleed","Freeze","Injure"};
+    string s=bonus[rand()%3];
+
+    //添加词缀
+    bool flag=false;
+    for(auto x:myBonus)
+    {
+        if(x==s)
+        {
+            flag=true;
+            break;
+        }
+    }
+    if(!flag) myBonus.push_back(s);
+    BonusChange();//通知MainWindow
+
     scene.removeItem(m);//删除图元
     for( vector<Monster*>::iterator it = monsters.begin(); it != monsters.end(); it++ )
     {
@@ -397,4 +423,15 @@ void GameController::Shoot(QGraphicsItem* t,Monster* m)
     bulletTwo* b=new bulletTwo(t->pos(),m->pos(),*this);//发射2号子弹
     scene.addItem(b);
     bullets.push_back(b);
+}
+
+void GameController::addTowerBonus(QGraphicsItem* t,string s)
+{
+    for(auto x:towers)
+    {
+        if(x==t)
+        {
+            x->addBonus(s);
+        }
+    }
 }

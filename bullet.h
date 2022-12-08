@@ -15,6 +15,7 @@ enum GameObjectTypes {
     GO_Bullet,//怪兽打塔的子弹
     GO_Bullet2,//塔打怪兽的子弹
     GO_GunTower,
+    GO_Rect
 };
 #endif
 

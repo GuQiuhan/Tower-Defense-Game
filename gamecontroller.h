@@ -19,6 +19,7 @@ class GameController : public QObject
 {
     Q_OBJECT
 public:
+    vector<string> myBonus;//供MainWindow访问
     GameController(QGraphicsScene &scene, QObject *parent = 0);
     ~GameController();
     QAction *getResmueAction(){ return resumeAction;}
@@ -29,6 +30,7 @@ public:
     void Shoot(Monster* m,QGraphicsItem* t);//怪兽打塔，1号子弹
     void Shoot(QGraphicsItem* t,Monster* m);//塔打怪兽，2号子弹
     //void Shoot(MoonTower* m,QGraphicsItem* t);//塔打怪兽，2号子弹
+    void addTowerBonus(QGraphicsItem* t,string s);
 public slots:
     void pause();//暂停
     void resume();//继续
@@ -37,6 +39,8 @@ public slots:
     void addTower(QString type,QPointF pos);
     int getRound();
     int getMonsterNumber();
+
+
 protected:
     bool eventFilter(QObject *object, QEvent *event);
 
@@ -56,10 +60,12 @@ private:
       //注意这里一定要是指针类型！由于Monster类里含有引用类型，不知道应该如何构造默认构造函数，所以不可以使用类作为元素
       int Round;
 
+
+
 signals:
 //注意！信号函数是不需要实现的，声明后调用就可以了
       void MonsterNumberChange();//i可正可负，表示增加或减少的数量，每次Monster有变化时都需要调用
-      //void RoundNumberChange();
+      void BonusChange();
 
 
 };

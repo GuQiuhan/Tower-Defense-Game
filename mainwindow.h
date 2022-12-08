@@ -27,6 +27,7 @@ private:
     GameController* gamecontroller;
     void InitBackground();
     void InitListWidget();
+    void InitPositions();
     void test();//用来调试地图路径坐标
 
     void createActions();
@@ -49,6 +50,7 @@ private slots:
     void gameHelp();
     void about();
     void updateText();
+    void updateBonus();
 
 };
 

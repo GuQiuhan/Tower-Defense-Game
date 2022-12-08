@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createMenus();
 
     //test();//！测试路线，发行时删除！
+    InitPositions();
 
 
     setAcceptDrops(true);		//设置：接受拖放
@@ -38,12 +39,14 @@ void MainWindow::InitBackground()
     //左上角标签
     ui->lineEdit->setStyleSheet("background:transparent;border-width:0;border-style:outset;color: rgb(128, 0, 2)");
     ui->lineEdit_2->setStyleSheet("background:transparent;border-width:0;border-style:outset;color: rgb(128, 0, 2)");
+    ui->lineEdit_3->setStyleSheet("background:transparent;border-width:0;border-style:outset;color: rgb(128, 0, 2)");
     QFont font;
     font.setFamily("Trattatello");
     font.setPixelSize(20);
     font.setBold(true);
     ui->lineEdit->setFont(font);
     ui->lineEdit_2->setFont(font);
+    ui->lineEdit_3->setFont(font);
     QString s="Number of Monsters Now: ";
     s+=QString::number(gamecontroller->getMonsterNumber());
     ui->lineEdit->setText(s);
@@ -52,7 +55,7 @@ void MainWindow::InitBackground()
     s+=QString::number(gamecontroller->getRound());
     ui->lineEdit_2->setText(s);
     connect(gamecontroller,&GameController::MonsterNumberChange, this,&MainWindow::updateText);
-    //connect(gamecontroller,&GameController::RoundNumberChange, this,&MainWindow::updateText);
+    ui->lineEdit_3->setText("Your Bonus:");
     scene->setSceneRect(0, 0, 900, 550);//设置坐标系，此时坐标（0，0）在窗口左上角
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setStyleSheet("background: transparent");
@@ -102,6 +105,11 @@ void MainWindow::InitListWidget()
     ui->listWidget->addItem(item3);
     ui->listWidget->addItem(item5);
     ui->listWidget->addItem(item1);
+
+    //添加词缀
+    ui->listWidget_2->setDragEnabled(true);
+    connect(gamecontroller,&GameController::BonusChange, this,&MainWindow::updateBonus);
+
 
 }
 MainWindow::~MainWindow()//释放内存
@@ -254,6 +262,48 @@ void MainWindow::updateText()
     ui->lineEdit_2->setText(s);
 }
 
+void MainWindow::InitPositions()
+{
+    //画近战塔坑
+    QPen pen;
+    pen.setWidth(2);
+    pen.setColor(QColor(255, 255, 102,70));
+    //pen.setColor(Qt::yellow);
+    pen.setStyle(Qt::DotLine);
+    scene->addEllipse(250,180,50,40,pen);
+    scene->addEllipse(15,190,50,40,pen);
+    scene->addEllipse(15,400,50,40,pen);
+    scene->addEllipse(540,397,50,40,pen);
+    scene->addEllipse(700,397,50,40,pen);
+    scene->addEllipse(760,220,50,40,pen);
+    scene->addEllipse(220,397,50,40,pen);
+    scene->addEllipse(830,397,50,40,pen);
 
+    //用透明矩形标示路径
+    scene->addRect(300,0,70,180);
+    scene->addRect(100,100,200,70);
+    //待写
+}
 
+void MainWindow::updateBonus()
+{
+    //全部清空
+    int counter =ui->listWidget_2->count();
+    for(int index=0;index<counter;index++)
+    {
+        QListWidgetItem *item = ui->listWidget_2->takeItem(0);
+        delete item;
+    }
 
+    //重新添加
+    for(auto s:gamecontroller->myBonus)
+    {
+        QFont font;
+        font.setFamily("American Typewriter");
+        font.setPixelSize(10);
+        font.setBold(true);
+        QListWidgetItem *item = new QListWidgetItem(QIcon(":/image/effect3.png"), QString::fromStdString(s));
+        item->setFont(font);
+        ui->listWidget_2->addItem(item);
+    }
+}
