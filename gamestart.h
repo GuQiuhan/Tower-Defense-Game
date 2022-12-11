@@ -25,6 +25,7 @@ public:
     void playMusic();
     void loading();//加一个加载窗口
     Load l;
+    int getVersion(){return version;}
 
 private:
     Ui::GameStart *ui;
@@ -32,6 +33,7 @@ private:
 //    QMediaPlaylist * playlist;
     QSound *sound;//尝试得最终只能使用sound来进行播放
     //QTimer* q;
+    int version;
 
 //private slots:
 //    void start();

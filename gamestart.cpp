@@ -82,12 +82,13 @@ void GameStart::start()
     delete sound;//及时删除防止内存泄露
     if(ui->checkBox_1->isChecked())//根据选项创建不同的地图
     {
+        version=1;//使用map1
         this->accept();
     }
     else if(ui->checkBox_2->isChecked())//可自定义地图关卡
     {
-        //GameWindow w(path1);
-        //w.exec();
+        version=2;//使用map2
+        this->accept();
     }
 
 }

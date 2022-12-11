@@ -26,9 +26,6 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     monster.cpp \
-    player.cpp \
-    structures.cpp \
-    test.cpp \
     tower.cpp
 
 HEADERS += \
@@ -40,18 +37,12 @@ HEADERS += \
     load.h \
     mainwindow.h \
     monster.h \
-    player.h \
-    structures.h \
-    test.h \
     tower.h
 
 FORMS += \
     gamestart.ui \
-    gamewindow.ui \
-    gamewindowtwo.ui \
     load.ui \
-    mainwindow.ui \
-    test.ui
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

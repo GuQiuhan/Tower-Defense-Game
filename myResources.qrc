@@ -20,6 +20,7 @@
         <file>tower5_v1.jpg</file>
         <file>tower5_v2.jpg</file>
         <file>MoonTower.jpg</file>
+        <file>map3.gif</file>
     </qresource>
     <qresource prefix="/music"/>
     <qresource prefix="/gif">

@@ -19,7 +19,7 @@ class GameController;
 class Monster:public QGraphicsItem
 {
 private:
-    vector<QPointF> tmp_path;//当前路径（随机选择）
+   // vector<QPointF> tmp_path;//当前路径（随机选择）
     QPointF tmp;//当前像素位置
     int index;//当前位置于路径中的下标
     string Pic;//所用的gif路径,派生类中要使用
@@ -32,6 +32,7 @@ private:
 
 
 public:
+    vector<QPointF> tmp_path;//当前路径（随机选择）
     Monster(vector<QPointF> p,GameController & controller);//创建时需要给出路径
     Monster(Monster& m);//拷贝构造函数
     //Monster();

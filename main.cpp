@@ -4,7 +4,7 @@
 #include "mainwindow.h"
 #include <QDialog>
 #include <iostream>
-#include "test.h"
+
 
 using namespace  std;
 string path1="/Users/pro/Desktop/proj2/map1.txt";
@@ -21,7 +21,9 @@ int main(int argc, char *argv[])
     if (s.exec()==QDialog::Accepted)
     {
         //cout<<"here"<<endl;
-        MainWindow mw;
+        MainWindow mw(s.getVersion());
+        //cout<<s.getVersion()<<endl;
+        mw.setVersion(s.getVersion());
         mw.show();
         return a.exec();
     }

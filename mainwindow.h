@@ -16,8 +16,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(int i=1,QWidget *parent = nullptr);
     ~MainWindow();
+    void setVersion(int i);
+    int getVersion(){return version;}
 
 private:
     Ui::MainWindow *ui;
@@ -41,6 +43,8 @@ private:
     QAction *aboutAction;
     QAction *aboutQtAction;
 
+    int version;
+    int basic_map[8][13];//存储地图，*70像素
 
 
 

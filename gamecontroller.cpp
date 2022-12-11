@@ -1,4 +1,5 @@
 #include "gamecontroller.h"
+#include "findmonsterway.h"
 #include "monster.h"
 #include "tower.h"
 #include <QEvent>
@@ -6,12 +7,15 @@
 #include <QMessageBox>
 #include <vector>
 #include <iostream>
+#include <fstream>
 using namespace std;
 #include "bullet.h"
 #include <QDebug>
 
+const string path="/Users/pro/Desktop/proj2/map.txt";
+//const int mapBlockLen=70;
 //全局变量，map1中怪兽的所有路径
-vector<vector<QPointF>> MonsterPaths={
+vector<vector<QPointF>> p1={
     {
         QPointF(330,0),
         QPointF(330,100),
@@ -46,13 +50,17 @@ vector<vector<QPointF>> MonsterPaths={
     },
 };
 
+vector<vector<QPointF>> p2;
 
 
-
-GameController::GameController(QGraphicsScene &scene, QObject *parent) :
+GameController::GameController(QGraphicsScene &scene, int i,QObject *parent) :
     QObject(parent),
     scene(scene)
 {   
+    //找路
+    version=i;
+    InitPath();
+
     scene.installEventFilter(this);//添加了事件过滤器，以便监听键盘事件
 
     timer.start( 1000/40 );//开启充当游戏循环的定时器，定时间隔是 1000 / 40 毫秒，也就是每秒40帧
@@ -62,7 +70,7 @@ GameController::GameController(QGraphicsScene &scene, QObject *parent) :
     //开局先产生一个怪物
     srand((unsigned)time(NULL));
     int a=rand();
-    MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+    MonsterFrog* m=new MonsterFrog(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
     scene.addItem(m);
     monsters.push_back(m);
     MonsterNumberChange();
@@ -92,6 +100,51 @@ GameController::~GameController()//释放内存
     delete resumeAction;
 }
 
+void GameController::InitPath()
+{
+    if(version==1) MonsterPaths=p1;
+    //else MonsterPaths=p1;
+    else
+    {
+        int basic_map[8][13];//存储地图，*70像素
+        ifstream fin;
+        fin.open(path);
+        if(fin.fail()) cout<< "Fail to open the file:" <<path<<endl;
+        for(int i=0; i<8; ++i)
+        {
+            for(int j=0; j<13; ++j)
+            {
+                fin >> basic_map[i][j];
+            }
+        }
+        fin.close();
+
+        p2=FindMonsterWay().FindWay(basic_map);
+        FindMonsterWay().test(basic_map);
+
+        qDebug()<<p2.size();
+        for(int i=0; i<p2.size(); ++i)
+        {
+            qDebug()<<"begin:";
+            for(int j=0; j<p2[i].size(); ++j)
+            {
+                qDebug()<<p2[i][j];
+            }
+            qDebug()<<"end.";
+        }
+
+
+        p2.push_back(vector<QPointF>{
+                         QPointF(0,100),
+                         QPointF(40,50),
+                         QPointF(100,80),
+                         QPointF(300,200),
+                         QPointF(500,100),
+                         QPointF(875,525)
+                     });//最后一条总是飞行路径
+        MonsterPaths=p2;
+    }
+}
 
 void GameController::pause()//断开定时器的信号
 {
@@ -164,7 +217,7 @@ void GameController::gameOver() //游戏结束，计时器停止
     disconnect(&timer, SIGNAL(timeout()), &scene, SLOT(advance()));
     disconnect(&Monstertimer, SIGNAL(timeout()), this, SLOT(addMonster()));
     if (QMessageBox::Yes == QMessageBox::information(NULL,
-                            tr("Game Over"), tr("Again?"),
+                            tr("Game Over"), tr("Game Over! Again?"),
                             QMessageBox::Yes | QMessageBox::No,
                             QMessageBox::Yes)) {
 
@@ -212,25 +265,25 @@ void GameController::addMonster()
     //cout<< a<<endl;
     if(n<2)
     {
-        Monster* m=new Monster(MonsterPaths[2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        Monster* m=new Monster(MonsterPaths[MonsterPaths.size()-1],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
         scene.addItem(m);
         monsters.push_back(m);
     }
     else if(n<3)
     {
-        MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        MonsterFrog* m=new MonsterFrog(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
         scene.addItem(m);
         monsters.push_back(m);
     }
     else if(n<5)
     {
-        MonsterGhost* m=new MonsterGhost(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        MonsterGhost* m=new MonsterGhost(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
         scene.addItem(m);
         monsters.push_back(m);
     }
     else if(n<10)
     {
-        MonsterDino* m=new MonsterDino(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        MonsterDino* m=new MonsterDino(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
         scene.addItem(m);
         monsters.push_back(m);
     }
@@ -241,28 +294,28 @@ void GameController::addMonster()
         switch(x){
             case 0:
             {
-                Monster* m=new Monster(MonsterPaths[2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                Monster* m=new Monster(MonsterPaths[MonsterPaths.size()-1],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
                 scene.addItem(m);
                 monsters.push_back(m);
                 break;
             }
             case 1:
             {
-                MonsterFrog* m=new MonsterFrog(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                MonsterFrog* m=new MonsterFrog(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
                 scene.addItem(m);
                 monsters.push_back(m);
                 break;
             }
             case 2:
             {
-                MonsterGhost* m=new MonsterGhost(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                MonsterGhost* m=new MonsterGhost(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
                 scene.addItem(m);
                 monsters.push_back(m);
                 break;
             }
             case 3:
             {
-                MonsterDino* m=new MonsterDino(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+                MonsterDino* m=new MonsterDino(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
                 scene.addItem(m);
                 monsters.push_back(m);
                 break;
@@ -272,7 +325,7 @@ void GameController::addMonster()
 
     else if(n==15)//产生最终的boss
     {
-        MonsterBoss* m=new MonsterBoss(MonsterPaths[a%2],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
+        MonsterBoss* m=new MonsterBoss(MonsterPaths[a%(MonsterPaths.size()-1)],*this);//初始化一个怪兽，怪兽随机选择一个敌人，初始化时分配控制器
         scene.addItem(m);
         monsters.push_back(m);
     }
@@ -287,7 +340,7 @@ void GameController::addTower(QString type,QPointF pos)
     {
         MoonTower* t=new MoonTower(pos.x(),pos.y(),*this);
         towers.push_back(t);
-        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        //t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower1")
@@ -301,21 +354,21 @@ void GameController::addTower(QString type,QPointF pos)
     {
         GunTowerTwo* t=new GunTowerTwo(pos.x(),pos.y(),*this);
         towers.push_back(t);
-        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        //t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower3")
     {
         GunTowerThree* t=new GunTowerThree(pos.x(),pos.y(),*this);
         towers.push_back(t);
-        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        //t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
     else if(type=="GunTower4")
     {
         GunTowerFour* t=new GunTowerFour(pos.x(),pos.y(),*this);
         towers.push_back(t);
-        t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
+        //t->setFlags(QGraphicsItem::ItemIsMovable);//实现图元的可拖动
         scene.addItem(t);
     }
 
@@ -361,6 +414,8 @@ void GameController::deleteBullet(bullet* b)
 
 void GameController::deleteMonster(Monster* m)
 {
+    if(m->x()==m->tmp_path[m->tmp_path.size()-1].x()&&m->y()==m->tmp_path[m->tmp_path.size()-1].y())
+        this->gameOver();
     //随机掉落词缀
     vector<string> bonus={"Bleed","Freeze","Injure"};
     string s=bonus[rand()%3];

@@ -10,14 +10,20 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QMimeData>
 #include <QDebug>
+#include <fstream>
+#include <map>
 using namespace std;
 
-MainWindow::MainWindow(QWidget *parent) :
+const string path="/Users/pro/Desktop/proj2/map.txt";
+const int mapBlockLen=70;
+
+MainWindow::MainWindow(int i,QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     scene(new CustomScene(this)),
-    gamecontroller(new GameController(*scene,this))//游戏控制器，创建即游戏开始
+    gamecontroller(new GameController(*scene,i,this))//游戏控制器，创建即游戏开始
 {
+    version=i;
     ui->setupUi(this);
     scene->setController(gamecontroller);
     InitBackground();//初始化背景
@@ -32,8 +38,13 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);		//设置：接受拖放
     ui->listWidget->setAcceptDrops(false);//list控件不支持drag，所以松开鼠标时icon不会移位
     ui->graphicsView->setScene(scene);//这一句为加不加都一样？
+    ui->graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);//在view中加入刷新，消除重影
 }
 
+void MainWindow::setVersion(int i)
+{
+    version=i;
+}
 void MainWindow::InitBackground()
 {
     //左上角标签
@@ -61,18 +72,61 @@ void MainWindow::InitBackground()
     ui->graphicsView->setStyleSheet("background: transparent");
     //一定要设置透明背景！将label置于底层，这样子scene里的item才可以露出来，底下的background也可以看见
 
-    //添加背景到scene
-    //由于背景是gif,所以使用scene->addWidget
-    QLabel* label=new QLabel(this);
-    label->setGeometry(0,0,910,560);
-    QMovie *movie = new QMovie(":/image/map2.gif");
-    label->setMovie(movie);// 在标签中添加动画
-    label->setScaledContents(true);
-    label->lower();//一定要这句代码置于底层！否则看不见view
-    movie->start();
-    // 将label添加到场景中
-    //labelProxy= scene->addWidget(label);//scene->addWidget返回一个代理
+    if(version==1)//第一种地图，直接载入现有图片
+    {
+        //添加背景到scene
+        //由于背景是gif,所以使用scene->addWidget
+        QLabel* label=new QLabel(this);
+        label->setGeometry(0,0,910,560);
+        QMovie *movie = new QMovie(":/image/map2.gif");
+        label->setMovie(movie);// 在标签中添加动画
+        label->setScaledContents(true);
+        label->lower();//一定要这句代码置于底层！否则看不见view
+        movie->start();
+        // 将label添加到场景中
+        //labelProxy= scene->addWidget(label);//scene->addWidget返回一个代理
+     }
+    else if(version==2)//第二种地图，拼接地图板块
+    {
 
+        //读取txt文件        
+        ifstream fin;
+        fin.open(path);
+        if(fin.fail()) cout<< "Fail to open the file:" <<path<<endl;
+        for(int i=0; i<8; ++i)
+        {
+            for(int j=0; j<13; ++j)
+            {
+                fin >> basic_map[i][j];
+            }
+        }
+        fin.close();
+
+        //绘制地图
+        QPainter painter;
+        std::map<int,string> Pics;
+        Pics[0]=":/image/grass1.jpg";//起点
+        Pics[2]=":/image/sand.jpg";//沙子，非路
+        Pics[1]=":/image/grass1.jpg";//路
+        Pics[3]=":/image/water.jpg";//装饰用
+        Pics[4]=":/image/grass1.jpg";//终点
+
+        for(int j = 0; j < 8; j++)
+        {
+            for(int i = 0; i < 13; i++)
+            {
+                QLabel* label=new QLabel(this);
+                label->setGeometry(i * mapBlockLen, j * mapBlockLen, mapBlockLen, mapBlockLen);
+                label->setScaledContents(true);
+                label->lower();//一定要这句代码置于底层！否则看不见view
+                QImage image(QString::fromStdString(Pics[basic_map[j][i]]));
+                label->setPixmap(QPixmap::fromImage(image));
+                //不可以使用painter->drawPixmap函数，画出的图像会被挡在下面
+            }
+
+       }
+
+    }
 
 }
 
@@ -265,24 +319,65 @@ void MainWindow::updateText()
 void MainWindow::InitPositions()
 {
     //画近战塔坑
-    QPen pen;
-    pen.setWidth(2);
-    pen.setColor(QColor(255, 255, 102,70));
-    //pen.setColor(Qt::yellow);
-    pen.setStyle(Qt::DotLine);
-    scene->addEllipse(250,180,50,40,pen);
-    scene->addEllipse(15,190,50,40,pen);
-    scene->addEllipse(15,400,50,40,pen);
-    scene->addEllipse(540,397,50,40,pen);
-    scene->addEllipse(700,397,50,40,pen);
-    scene->addEllipse(760,220,50,40,pen);
-    scene->addEllipse(220,397,50,40,pen);
-    scene->addEllipse(830,397,50,40,pen);
+    if(version==1)
+    {
+        QPen pen;
+        pen.setWidth(2);
+        pen.setColor(QColor(255, 255, 102,70));
+        //pen.setColor(Qt::yellow);
+        pen.setStyle(Qt::DotLine);
+        scene->addEllipse(250,180,50,40,pen);
+        scene->addEllipse(15,190,50,40,pen);
+        scene->addEllipse(15,400,50,40,pen);
+        scene->addEllipse(540,397,50,40,pen);
+        scene->addEllipse(700,397,50,40,pen);
+        scene->addEllipse(760,220,50,40,pen);
+        scene->addEllipse(220,397,50,40,pen);
+        scene->addEllipse(830,397,50,40,pen);
 
-    //用透明矩形标示路径
-    scene->addRect(300,0,70,180);
-    scene->addRect(100,100,200,70);
-    //待写
+        //用透明矩形标示MoonTower路径
+        pen.setColor(QColor ( 255, 255, 102,  0x00ffffff ));//设置透明路径
+        scene->addRect(300,0,70,170,pen);
+        scene->addRect(80,100,220,70,pen);
+        scene->addRect(70,170,70,350,pen);
+        scene->addRect(140,440,200,90,pen);
+        scene->addRect(340,400,150,90,pen);
+        scene->addRect(490,440,420,90,pen);
+
+        scene->addRect(830,0,70,350,pen);
+        scene->addRect(600,270,230,80,pen);
+        scene->addRect(600,350,80,90,pen);
+
+    }
+
+    else if(version==2)
+    {
+        QPen pen;
+        pen.setWidth(2);
+        pen.setColor(QColor(255, 255, 102,70));
+        //pen.setColor(Qt::yellow);
+        pen.setStyle(Qt::DotLine);
+        for(int i=0; i<8;++i)
+        {
+            for(int j=0;j<13; ++j)
+            {
+                if(basic_map[i][j]==3)
+                    scene->addEllipse(j*mapBlockLen+0*mapBlockLen,i*mapBlockLen+0*mapBlockLen,60,60,pen);
+            }
+        }
+
+        //用透明矩形标示MoonTower路径
+        pen.setColor(QColor ( 255, 255, 102,  0x00ffffff ));//设置透明路径
+        for(int i=0; i<8;++i)
+        {
+            for(int j=0;j<13; ++j)
+            {
+                if(basic_map[i][j]==0||basic_map[i][j]==1||basic_map[i][j]==4)
+                    scene->addRect(j*mapBlockLen,i*mapBlockLen,mapBlockLen,mapBlockLen,pen);
+            }
+        }
+
+    }
 }
 
 void MainWindow::updateBonus()
