@@ -28,9 +28,6 @@ private:
 
     void advance(int s);//必须重载！用于计时器刷新时调用
 
-
-
-
 public:
     vector<QPointF> tmp_path;//当前路径（随机选择）
     Monster(vector<QPointF> p,GameController & controller);//创建时需要给出路径
